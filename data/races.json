@@ -1,18 +1,355 @@
 {
-  "season": "2026/27",
-  "updated": "2026-11-18T19:00:00Z",
-  "races": [
-    {"id":"2627-KON-IN-M","stage":"1 etapas · Kontiolahti (FIN)","name":"Vyrų 20 km individuali","start":"2026-11-26T15:10:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
-    {"id":"2627-KON-IN-W","stage":"1 etapas · Kontiolahti (FIN)","name":"Moterų 15 km individuali","start":"2026-11-27T15:10:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
-    {"id":"2627-KON-SMR","stage":"1 etapas · Kontiolahti (FIN)","name":"Single mišri estafetė","start":"2026-11-28T12:10:00Z","team":true,"startlist":[],"favorites":[],"result":[]},
-    {"id":"2627-KON-MR","stage":"1 etapas · Kontiolahti (FIN)","name":"Mišri estafetė","start":"2026-11-28T14:15:00Z","team":true,"startlist":[],"favorites":[],"result":[]},
-    {"id":"2627-KON-SP-M","stage":"1 etapas · Kontiolahti (FIN)","name":"Vyrų 10 km sprintas","start":"2026-11-29T12:00:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
-    {"id":"2627-KON-SP-W","stage":"1 etapas · Kontiolahti (FIN)","name":"Moterų 7,5 km sprintas","start":"2026-11-29T15:15:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
-    {"id":"2627-HOC-SP-W","stage":"2 etapas · Hochfilzen (AUT)","name":"Moterų 7,5 km sprintas","start":"2026-12-04T10:25:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
-    {"id":"2627-HOC-SP-M","stage":"2 etapas · Hochfilzen (AUT)","name":"Vyrų 10 km sprintas","start":"2026-12-04T13:15:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
-    {"id":"2627-HOC-PU-W","stage":"2 etapas · Hochfilzen (AUT)","name":"Moterų 10 km persekiojimas","start":"2026-12-05T11:15:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
-    {"id":"2627-HOC-PU-M","stage":"2 etapas · Hochfilzen (AUT)","name":"Vyrų 12,5 km persekiojimas","start":"2026-12-05T13:30:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
-    {"id":"2627-HOC-RL-W","stage":"2 etapas · Hochfilzen (AUT)","name":"Moterų estafetė 4×6 km","start":"2026-12-06T10:30:00Z","team":true,"startlist":[],"favorites":[],"result":[]},
-    {"id":"2627-HOC-RL-M","stage":"2 etapas · Hochfilzen (AUT)","name":"Vyrų estafetė 4×7,5 km","start":"2026-12-06T13:15:00Z","team":true,"startlist":[],"favorites":[],"result":[]}
-  ]
+ "season": "2026/27",
+ "updated": "2026-11-18T19:00:00Z",
+ "races": [
+  {
+   "id": "2627-KON-IN-M",
+   "stage": "1 etapas · Kontiolahti (FIN)",
+   "name": "Vyrų 20 km individuali",
+   "start": "2026-11-26T15:10:00Z",
+   "team": false,
+   "startlist": [],
+   "favorites": [],
+   "result": []
+  },
+  {
+   "id": "2627-KON-IN-W",
+   "stage": "1 etapas · Kontiolahti (FIN)",
+   "name": "Moterų 15 km individuali",
+   "start": "2026-11-27T15:10:00Z",
+   "team": false,
+   "startlist": [],
+   "favorites": [],
+   "result": []
+  },
+  {
+   "id": "2627-KON-SMR",
+   "stage": "1 etapas · Kontiolahti (FIN)",
+   "name": "Single mišri estafetė",
+   "start": "2026-11-28T12:10:00Z",
+   "team": true,
+   "startlist": [],
+   "favorites": [],
+   "result": []
+  },
+  {
+   "id": "2627-KON-MR",
+   "stage": "1 etapas · Kontiolahti (FIN)",
+   "name": "Mišri estafetė",
+   "start": "2026-11-28T14:15:00Z",
+   "team": true,
+   "startlist": [],
+   "favorites": [],
+   "result": []
+  },
+  {
+   "id": "2627-KON-SP-M",
+   "stage": "1 etapas · Kontiolahti (FIN)",
+   "name": "Vyrų 10 km sprintas",
+   "start": "2026-11-29T12:00:00Z",
+   "team": false,
+   "startlist": [],
+   "favorites": [],
+   "result": []
+  },
+  {
+   "id": "2627-KON-SP-W",
+   "stage": "1 etapas · Kontiolahti (FIN)",
+   "name": "Moterų 7,5 km sprintas",
+   "start": "2026-11-29T15:15:00Z",
+   "team": false,
+   "startlist": [],
+   "favorites": [],
+   "result": []
+  },
+  {
+   "id": "2627-HOC-SP-W",
+   "stage": "2 etapas · Hochfilzen (AUT)",
+   "name": "Moterų 7,5 km sprintas",
+   "start": "2026-12-04T10:25:00Z",
+   "team": false,
+   "startlist": [],
+   "favorites": [],
+   "result": []
+  },
+  {
+   "id": "2627-HOC-SP-M",
+   "stage": "2 etapas · Hochfilzen (AUT)",
+   "name": "Vyrų 10 km sprintas",
+   "start": "2026-12-04T13:15:00Z",
+   "team": false,
+   "startlist": [],
+   "favorites": [],
+   "result": []
+  },
+  {
+   "id": "2627-HOC-PU-W",
+   "stage": "2 etapas · Hochfilzen (AUT)",
+   "name": "Moterų 10 km persekiojimas",
+   "start": "2026-12-05T11:15:00Z",
+   "team": false,
+   "startlist": [],
+   "favorites": [],
+   "result": []
+  },
+  {
+   "id": "2627-HOC-PU-M",
+   "stage": "2 etapas · Hochfilzen (AUT)",
+   "name": "Vyrų 12,5 km persekiojimas",
+   "start": "2026-12-05T13:30:00Z",
+   "team": false,
+   "startlist": [],
+   "favorites": [],
+   "result": []
+  },
+  {
+   "id": "2627-HOC-RL-W",
+   "stage": "2 etapas · Hochfilzen (AUT)",
+   "name": "Moterų estafetė 4×6 km",
+   "start": "2026-12-06T10:30:00Z",
+   "team": true,
+   "startlist": [],
+   "favorites": [],
+   "result": []
+  },
+  {
+   "id": "2627-HOC-RL-M",
+   "stage": "2 etapas · Hochfilzen (AUT)",
+   "name": "Vyrų estafetė 4×7,5 km",
+   "start": "2026-12-06T13:15:00Z",
+   "team": true,
+   "startlist": [],
+   "favorites": [],
+   "result": []
+  },
+  {
+   "id": "TEST-SP-M",
+   "stage": "🧪 TESTAS (bus ištrinta)",
+   "name": "Vyrų 10 km sprintas (testas)",
+   "start": "2026-11-21T15:00:00Z",
+   "team": false,
+   "startlist": [
+    {
+     "name": "Johannes DALE-SKJEVDAL",
+     "nat": "NOR",
+     "bib": 1
+    },
+    {
+     "name": "Sturla Holm LAEGREID",
+     "nat": "NOR",
+     "bib": 2
+    },
+    {
+     "name": "Tarjei BOE",
+     "nat": "NOR",
+     "bib": 3
+    },
+    {
+     "name": "Vetle Sjaastad CHRISTIANSEN",
+     "nat": "NOR",
+     "bib": 4
+    },
+    {
+     "name": "Endre STROEMSHEIM",
+     "nat": "NOR",
+     "bib": 5
+    },
+    {
+     "name": "Eric PERROT",
+     "nat": "FRA",
+     "bib": 6
+    },
+    {
+     "name": "Emilien JACQUELIN",
+     "nat": "FRA",
+     "bib": 7
+    },
+    {
+     "name": "Quentin FILLON MAILLET",
+     "nat": "FRA",
+     "bib": 8
+    },
+    {
+     "name": "Fabien CLAUDE",
+     "nat": "FRA",
+     "bib": 9
+    },
+    {
+     "name": "Sebastian SAMUELSSON",
+     "nat": "SWE",
+     "bib": 10
+    },
+    {
+     "name": "Martin PONSILUOMA",
+     "nat": "SWE",
+     "bib": 11
+    },
+    {
+     "name": "Jesper NELIN",
+     "nat": "SWE",
+     "bib": 12
+    },
+    {
+     "name": "Philipp NAWRATH",
+     "nat": "GER",
+     "bib": 13
+    },
+    {
+     "name": "Philipp HORN",
+     "nat": "GER",
+     "bib": 14
+    },
+    {
+     "name": "Justus STRELOW",
+     "nat": "GER",
+     "bib": 15
+    },
+    {
+     "name": "Tommaso GIACOMEL",
+     "nat": "ITA",
+     "bib": 16
+    },
+    {
+     "name": "Lukas HOFER",
+     "nat": "ITA",
+     "bib": 17
+    },
+    {
+     "name": "Campbell WRIGHT",
+     "nat": "USA",
+     "bib": 18
+    },
+    {
+     "name": "Michal KRCMAR",
+     "nat": "CZE",
+     "bib": 19
+    },
+    {
+     "name": "Vitezslav HORNIG",
+     "nat": "CZE",
+     "bib": 20
+    },
+    {
+     "name": "Niklas HARTWEG",
+     "nat": "SUI",
+     "bib": 21
+    },
+    {
+     "name": "Sebastian STALDER",
+     "nat": "SUI",
+     "bib": 22
+    },
+    {
+     "name": "Olli HIIDENSALO",
+     "nat": "FIN",
+     "bib": 23
+    },
+    {
+     "name": "Simon EDER",
+     "nat": "AUT",
+     "bib": 24
+    },
+    {
+     "name": "Jakov FAK",
+     "nat": "SLO",
+     "bib": 25
+    },
+    {
+     "name": "Vytautas STROLIA",
+     "nat": "LTU",
+     "bib": 26
+    },
+    {
+     "name": "Karol DOMBROVSKI",
+     "nat": "LTU",
+     "bib": 27
+    }
+   ],
+   "favorites": [
+    "Johannes DALE-SKJEVDAL",
+    "Eric PERROT",
+    "Sturla Holm LAEGREID",
+    "Sebastian SAMUELSSON",
+    "Quentin FILLON MAILLET"
+   ],
+   "result": [],
+   "note": "Tai bandomoji rungtis – startų sąrašas sugalvotas."
+  },
+  {
+   "id": "TEST-RL-M",
+   "stage": "🧪 TESTAS (bus ištrinta)",
+   "name": "Vyrų estafetė (testas)",
+   "start": "2026-11-21T17:00:00Z",
+   "team": true,
+   "startlist": [
+    {
+     "name": "Norway",
+     "nat": "",
+     "bib": 1
+    },
+    {
+     "name": "France",
+     "nat": "",
+     "bib": 2
+    },
+    {
+     "name": "Sweden",
+     "nat": "",
+     "bib": 3
+    },
+    {
+     "name": "Germany",
+     "nat": "",
+     "bib": 4
+    },
+    {
+     "name": "Italy",
+     "nat": "",
+     "bib": 5
+    },
+    {
+     "name": "Czechia",
+     "nat": "",
+     "bib": 6
+    },
+    {
+     "name": "Switzerland",
+     "nat": "",
+     "bib": 7
+    },
+    {
+     "name": "Finland",
+     "nat": "",
+     "bib": 8
+    },
+    {
+     "name": "Austria",
+     "nat": "",
+     "bib": 9
+    },
+    {
+     "name": "USA",
+     "nat": "",
+     "bib": 10
+    },
+    {
+     "name": "Slovenia",
+     "nat": "",
+     "bib": 11
+    },
+    {
+     "name": "Lithuania",
+     "nat": "",
+     "bib": 12
+    }
+   ],
+   "favorites": [
+    "Norway",
+    "France",
+    "Sweden",
+    "Germany"
+   ],
+   "result": []
+  }
+ ]
 }
