@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=7";
+import { firebaseConfig } from "./firebase-config.js?v=8";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -127,6 +127,15 @@ function renderRaces() {
   box.innerHTML = stages.map(stageCard).join("");
 }
 
+function myState(r) {
+  const pk = pickOf(r, S.myName);
+  if (hasResult(r)) return { cls: "st-done", label: pk && !pk.late ? `Rezultatai · ${score(r, pk).pts} t.` : "Rezultatai · nespėta" };
+  if (isLocked(r)) return pk && !pk.late ? { cls: "st-picked", label: "🔒 Spėta" } : { cls: "st-locked", label: "🔒 Nespėta" };
+  if (pk) return { cls: "st-picked", label: "✓ Spėta" };
+  if (!(r.startlist || []).length) return { cls: "st-wait", label: "⏳ Laukiam sąrašo" };
+  return { cls: "st-need", label: "✍️ Nespėta" };
+}
+
 function stageCard(st) {
   const first = st.races[0], last = st.races[st.races.length - 1];
   const d = iso => new Date(iso).toLocaleDateString("lt-LT", { month: "short", day: "numeric" });
@@ -140,21 +149,36 @@ function stageCard(st) {
       <div class="race-title big">${esc(st.name)}</div>
       <div class="race-meta">${d(first.start)} – ${d(last.start)} · ${st.races.length} rungt. · tavo spėjimų ${mine}/${st.races.length}</div>
     </div>${badge}</div>
-    <div class="chips">${pts}</div>
-    ${toPick ? `<div class="to-pick">✍️ Laukia tavo spėjimo: ${toPick}</div>` : ""}
+    <div class="mini-states">${st.races.map(r => { const m = myState(r); return `<span class="mini ${m.cls}" title="${esc(r.name)}">${esc(shortName(r.name))}<b>${esc(m.label)}</b></span>`; }).join("")}</div>
+    <div class="chips" style="margin-top:10px">${pts}</div>
+    ${toPick ? `<div class="to-pick">✍️ Dar nespėjai ${toPick} rungt.</div>` : ""}
   </a>`;
+}
+
+function shortName(n) { return n.replace(/\s*\(testas\)/, "").replace(/^Vyrų /, "V ").replace(/^Moterų /, "M "); }
+function banner(r) {
+  const pk = pickOf(r, S.myName), m = myState(r);
+  const raw = S.picks[r.id + "__" + (S.user && S.user.uid)];
+  const when = raw && raw.updatedAt && raw.updatedAt.toDate ? raw.updatedAt.toDate().toLocaleString("lt-LT", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
+  let text;
+  if (m.cls === "st-need") text = "✍️ Tu dar nespėjai šios rungties";
+  else if (m.cls === "st-wait") text = "⏳ Startų sąrašas dar nepaskelbtas – spėti dar negalima";
+  else if (m.cls === "st-locked") text = "🔒 Rungtis prasidėjo – tu nespėjai";
+  else if (m.cls === "st-picked") text = isLocked(r) ? "🔒 Tavo spėjimas užfiksuotas" : `✓ Tavo spėjimas pateiktas${when ? " (" + when + ")" : ""} – iki starto dar gali keisti`;
+  else text = pk && !pk.late ? `🏁 Rezultatai: surinkai ${score(r, pk).pts} t.` : "🏁 Rezultatai paskelbti – tu nespėjai";
+  return `<div class="banner ${m.cls}">${esc(text)}</div>`;
 }
 
 function stageView(st, raceId) {
   let r = raceId && st.races.find(x => x.id === raceId);
   if (!r) r = st.races.find(x => !isLocked(x)) || st.races[st.races.length - 1];
   const tabs = st.races.map(x => {
-    const mine = pickOf(x, S.myName);
-    const dot = hasResult(x) ? "✓" : isLocked(x) ? "🔒" : mine ? "●" : "○";
+    const m = myState(x);
     const t = new Date(x.start);
-    return `<a class="rtab${x === r ? " on" : ""}" href="#s-${st.key}~${encodeURIComponent(x.id)}">
-      <span class="rtab-name">${dot} ${esc(x.name)}</span>
-      <span class="rtab-time">${t.toLocaleDateString("lt-LT", { weekday: "short", day: "numeric" })} ${t.toLocaleTimeString("lt-LT", { hour: "2-digit", minute: "2-digit" })}</span></a>`;
+    return `<a class="rtab ${m.cls}${x === r ? " on" : ""}" href="#s-${st.key}~${encodeURIComponent(x.id)}">
+      <span class="rtab-name">${esc(x.name)}</span>
+      <span class="rtab-time">${t.toLocaleDateString("lt-LT", { weekday: "short", day: "numeric" })} ${t.toLocaleTimeString("lt-LT", { hour: "2-digit", minute: "2-digit" })}</span>
+      <span class="rtab-state">${esc(m.label)}</span></a>`;
   }).join("");
   const locked = isLocked(r), done = hasResult(r);
   const badge = done ? `<span class="badge b-done">Rezultatai</span>`
@@ -171,6 +195,7 @@ function stageView(st, raceId) {
       <div class="race-head"><div>
         <div class="race-title big">${esc(r.name)}</div>
         <div class="race-meta">${fmtTime(r.start)} (LT laiku)</div></div>${badge}</div>
+      ${banner(r)}
       <div class="chips">${chips}</div>
       <div class="body">${raceBody(r, locked, done)}</div>
     </div>`;

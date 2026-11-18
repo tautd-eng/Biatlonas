@@ -105,3 +105,23 @@ td.pts{font-weight:700;text-align:right}
 .rtab.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
 .rtab-name{font-weight:600;white-space:nowrap}
 .rtab-time{color:var(--muted);font-size:12px}
+/* spėjimo būsenos */
+.st-need{--st:#d9480f;--st-bg:#fff0e6}
+.st-picked{--st:#1f8a4c;--st-bg:#e5f4ec}
+.st-done{--st:#0b62d6;--st-bg:#e6f0fd}
+.st-locked{--st:#6b7280;--st-bg:#eef0f3}
+.st-wait{--st:#8a6d1a;--st-bg:#fbf4dc}
+@media (prefers-color-scheme: dark){
+  .st-need{--st:#ff9354;--st-bg:#3a2214}
+  .st-picked{--st:#4cc47f;--st-bg:#163626}
+  .st-done{--st:#5aa2ff;--st-bg:#17304f}
+  .st-locked{--st:#9aa3b2;--st-bg:#232c3a}
+  .st-wait{--st:#e0b44a;--st-bg:#352c12}
+}
+.banner{margin:10px 0 4px;padding:10px 12px;border-radius:8px;font-weight:600;font-size:14px;color:var(--st);background:var(--st-bg);border-left:4px solid var(--st)}
+.rtab{border-left:4px solid var(--st,var(--line))}
+.rtab-state{font-size:12px;font-weight:700;color:var(--st)}
+.rtab.on{box-shadow:0 0 0 2px var(--accent)}
+.mini-states{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.mini{display:flex;flex-direction:column;font-size:11px;padding:4px 8px;border-radius:6px;background:var(--st-bg);color:var(--ink);border-left:3px solid var(--st)}
+.mini b{color:var(--st);font-size:11px}
