@@ -252,3 +252,7 @@ html[data-theme="pink"] .banner{font-weight:600}
 .sl-pick.picked{background:var(--accent-soft)}
 .sl-pick.picked .sl-place{background:var(--accent);border:0}
 .sl-team.picked .sl-row{background:transparent}
+
+.hit-adj{color:var(--accent);font-weight:600}
+.rules-t{margin:6px 0 10px}
+.rules-t td.pts{text-align:right}

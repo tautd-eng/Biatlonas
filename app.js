@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=21";
+import { firebaseConfig } from "./firebase-config.js?v=22";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -13,7 +13,10 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 const norm = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
 
 const S = {
-  races: [], config: { players: ["Tautvydas","Vitalija","Vitalis"], scoring: { exact: 3, inTop6: 1, winnerBonus: 0 }, rulesNote: "" },
+  races: [], config: { players: ["Tautvydas","Vitalija","Vitalis"], scoring: {
+    individual: { exact: [6,5,4,3,3,3], adjacent: 2, inTop6: 1, podiumBonus: 2, top6Bonus: 2 },
+    team: { exact: [4,3,3,2,2,2], adjacent: 1, inTop6: 0, podiumBonus: 1, top6Bonus: 2 },
+    championshipMultiplier: 1.5 }, rulesNote: "" },
   user: null, myName: null, claims: {}, picks: {}, open: new Set(), unsub: []
 };
 
@@ -41,18 +44,27 @@ function same(a, b) {
   const [s, l] = a.length < b.length ? [a, b] : [b, a];
   return s.length >= 4 && (l.endsWith(" " + s) || l.startsWith(s + " "));
 }
+const isChamp = r => r.championship === true || /čempionat/i.test(r.stage || "");
+const raceMult = r => isChamp(r) ? (S.config.scoring.championshipMultiplier || 1) : 1;
+const fmtPts = x => (Math.round(x * 10) / 10).toString().replace(".", ",");
+// marks: exact | adj | top | ""
 function score(race, pk) {
-  const sc = S.config.scoring;
+  const sc = race.team ? S.config.scoring.team : S.config.scoring.individual;
   const res = (race.result || []).slice(0, 6);
-  let pts = 0; const marks = [];
-  if (!pk || pk.late) return { pts: 0, marks: [] };
+  if (!pk || pk.late || !res.length) return { pts: 0, marks: [], bonus: [] };
+  let pts = 0; const marks = [], bonus = [];
   pk.picks.forEach((p, i) => {
     let m = "";
-    if (p && res[i] && same(p, res[i])) { pts += sc.exact; m = "exact"; if (i === 0 && sc.winnerBonus) pts += sc.winnerBonus; }
-    else if (p && res.some(r => same(p, r))) { pts += sc.inTop6; m = "top"; }
+    const j = p ? res.findIndex(r => same(p, r)) : -1;
+    if (j === i) { pts += sc.exact[i] || 0; m = "exact"; }
+    else if (j >= 0 && Math.abs(j - i) === 1) { pts += sc.adjacent; m = "adj"; }
+    else if (j >= 0) { pts += sc.inTop6; m = "top"; }
     marks.push(m);
   });
-  return { pts, marks };
+  if (res.length >= 3 && [0,1,2].every(i => marks[i] === "exact")) { pts += sc.podiumBonus; bonus.push(`podiumas +${sc.podiumBonus}`); }
+  if (res.length >= 6 && marks.filter(Boolean).length === 6) { pts += sc.top6Bonus; bonus.push(`visas top-6 +${sc.top6Bonus}`); }
+  const mult = raceMult(race);
+  return { pts: pts * mult, marks, bonus, mult };
 }
 function showOnly(id) {
   ["auth", "claim"].forEach(x => $("#" + x).classList.toggle("hidden", x !== id));
@@ -147,7 +159,7 @@ function tickCountdowns() {
 
 function myState(r) {
   const pk = pickOf(r, S.myName);
-  if (hasResult(r)) return { cls: "st-done", label: pk && !pk.late ? `Rezultatai · ${score(r, pk).pts} t.` : "Rezultatai · nespėta" };
+  if (hasResult(r)) return { cls: "st-done", label: pk && !pk.late ? `Rezultatai · ${fmtPts(score(r, pk).pts)} t.` : "Rezultatai · nespėta" };
   if (isLocked(r)) return pk && !pk.late ? { cls: "st-picked", label: "🔒 Spėta" } : { cls: "st-locked", label: "🔒 Nespėta" };
   if (pk) return { cls: "st-picked", label: "✓ Spėta" };
   if (!(r.startlist || []).length) return { cls: "st-wait", label: "⏳ Laukiam sąrašo" };
@@ -161,7 +173,7 @@ function stageCard(st) {
   const mine = st.races.filter(r => pickOf(r, S.myName)).length;
   const toPick = st.races.filter(r => !isLocked(r) && (r.startlist || []).length && !pickOf(r, S.myName)).length;
   const badge = allDone ? `<span class="badge b-done">Baigtas</span>` : anyOpen ? `<span class="badge b-open">Vyksta / artėja</span>` : `<span class="badge b-live">Laukiam rezultatų</span>`;
-  const pts = players().map(p => `<span class="chip">${esc(p)}: ${st.races.reduce((s, r) => s + score(r, pickOf(r, p)).pts, 0)} t.</span>`).join("");
+  const pts = players().map(p => `<span class="chip">${esc(p)}: ${fmtPts(st.races.reduce((s, r) => s + score(r, pickOf(r, p)).pts, 0))} t.</span>`).join("");
   return `<a class="card stage-card" href="#s-${st.key}">
     <div class="race-head"><div>
       <div class="race-title big">${esc(st.name)}</div>
@@ -184,7 +196,7 @@ function banner(r) {
   else if (m.cls === "st-wait") text = "⏳ Startų sąrašas dar nepaskelbtas – spėti dar negalima";
   else if (m.cls === "st-locked") text = "🔒 Rungtis prasidėjo – tu nespėjai";
   else if (m.cls === "st-picked") text = isLocked(r) ? "🔒 Tavo spėjimas užfiksuotas" : `✓ Tavo spėjimas pateiktas${when ? " (" + when + ")" : ""} – iki starto dar gali keisti`;
-  else text = pk && !pk.late ? `🏁 Rezultatai: surinkai ${score(r, pk).pts} t.` : "🏁 Rezultatai paskelbti – tu nespėjai";
+  else text = pk && !pk.late ? `🏁 Rezultatai: surinkai ${fmtPts(score(r, pk).pts)} t.` : "🏁 Rezultatai paskelbti – tu nespėjai";
   const left = !isLocked(r) ? `<div class="banner-cd">⏰ Spėjimą pateikti liko: ${cd(r.start)}</div>` : "";
   return `<div class="banner ${m.cls}">${esc(text)}${left}</div>`;
 }
@@ -205,7 +217,7 @@ function stageView(st, raceId) {
     : locked ? `<span class="badge b-live">Užrakinta</span>` : `<span class="badge b-open">Atvira</span>`;
   const chips = players().map(p => {
     const pk = pickOf(r, p);
-    if (done && pk) return `<span class="chip ok">${esc(p)}: ${score(r, pk).pts} t.</span>`;
+    if (done && pk) return `<span class="chip ok">${esc(p)}: ${fmtPts(score(r, pk).pts)} t.</span>`;
     return `<span class="chip ${pk && !pk.late ? "ok" : ""}">${esc(p)} ${pk && !pk.late ? "✓" : "–"}</span>`;
   }).join("");
   return `<a class="back" href="#">← Visi etapai</a>
@@ -315,13 +327,17 @@ function raceBody(r, locked, done) {
     for (let k = 0; k < 6; k++) {
       h += `<tr><td>${k + 1}</td>` + sc.map(({ pk, s }) => {
         const v = pk ? pk.picks[k] || "" : "";
-        const cls = pk && pk.late ? "late" : s.marks[k] === "exact" ? "hit-exact" : s.marks[k] === "top" ? "hit-top" : "";
+        const cls = pk && pk.late ? "late" : s.marks[k] === "exact" ? "hit-exact" : s.marks[k] === "adj" ? "hit-adj" : s.marks[k] === "top" ? "hit-top" : "";
         return `<td class="${cls}">${esc(v) || "–"}</td>`;
       }).join("") + (done ? `<td><b>${esc(r.result[k] || "")}</b></td>` : "") + `</tr>`;
     }
-    if (done) h += `<tr><td></td>${sc.map(x => `<td class="pts">${x.s.pts} t.</td>`).join("")}<td></td></tr>`;
+    if (done) h += `<tr><td></td>${sc.map(x => `<td class="pts">${fmtPts(x.s.pts)} t.</td>`).join("")}<td></td></tr>`;
     h += `</table>`;
-    if (done) h += `<div class="msg"><span class="hit-exact">Žalia</span> – tiksli vieta, <span class="hit-top">auksinė</span> – pateko į top-6.</div>`;
+    if (done) {
+      const bon = sc.map((x, i) => x.s.bonus.length ? `${esc(players()[i])}: ${x.s.bonus.join(", ")}` : "").filter(Boolean);
+      if (bon.length) h += `<div class="msg">🎁 Bonusai – ${bon.join(" · ")}</div>`;
+      h += `<div class="msg"><span class="hit-exact">Žalia</span> – tiksli vieta, <span class="hit-adj">mėlyna</span> – per vieną vietą, <span class="hit-top">auksinė</span> – pateko į top-6.${isChamp(r) ? " Taškai ×" + fmtPts(raceMult(r)) + " (čempionatas)." : ""}</div>`;
+    }
     if (sc.some(x => x.pk && x.pk.late)) h += `<div class="msg"><span class="late">Perbraukta</span> – spėjimas pakeistas po starto, neskaičiuojamas.</div>`;
     h += startlistBlock(r, false);
   }
@@ -348,7 +364,7 @@ function startlistBlock(r, open) {
 
 function renderTable() {
   const ps = players();
-  const tot = ps.map(p => ({ name: p, pts: 0, races: 0, exact: 0, top: 0, wins: 0 }));
+  const tot = ps.map(p => ({ name: p, pts: 0, races: 0, exact: 0, adj: 0, top: 0, raceWins: 0, stageWins: 0 }));
   const doneRaces = S.races.filter(hasResult).sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
   for (const r of doneRaces) {
     const sc = ps.map(p => score(r, pickOf(r, p)));
@@ -357,40 +373,71 @@ function renderTable() {
       const pk = pickOf(r, ps[i]); if (pk && !pk.late) tot[i].races++;
       tot[i].pts += s.pts;
       tot[i].exact += s.marks.filter(m => m === "exact").length;
+      tot[i].adj += s.marks.filter(m => m === "adj").length;
       tot[i].top += s.marks.filter(m => m === "top").length;
-      if (best > 0 && s.pts === best) tot[i].wins++;
+      if (best > 0 && s.pts === best) tot[i].raceWins++;
     });
   }
-  const ranked = [...tot].sort((a, b) => b.pts - a.pts);
+  // etapų statistika
+  const stages = stagesList().filter(st => st.races.some(hasResult));
+  const stageRows = stages.map(st => {
+    const pts = ps.map(p => st.races.reduce((a, r) => a + score(r, pickOf(r, p)).pts, 0));
+    const complete = st.races.every(hasResult);
+    const best = Math.max(...pts);
+    const winners = complete && best > 0 ? ps.filter((p, i) => pts[i] === best) : [];
+    winners.forEach(w => tot[ps.indexOf(w)].stageWins++);
+    return { st, pts, complete, winners, done: st.races.filter(hasResult).length };
+  });
+  const ranked = [...tot].sort((a, b) => b.pts - a.pts || b.stageWins - a.stageWins || b.exact - a.exact);
   let h = `<div class="card">${ranked.map((t, k) => `<div class="lb-row"><div class="lb-pos">${k + 1}</div>
-    <div class="lb-name">${esc(t.name)}<div class="lb-sub">${t.races} rungt. · ${t.exact} tikslūs · ${t.top} top-6 · laimėta ${t.wins} rungt.</div></div>
-    <div class="lb-pts">${t.pts}</div></div>`).join("")}</div>`;
-  if (doneRaces.length) {
-    h += `<div class="card"><table><tr><th>Rungtis</th>${ps.map(p => `<th style="text-align:right">${esc(p)}</th>`).join("")}</tr>`;
+    <div class="lb-name">${esc(t.name)}<div class="lb-sub">🏆 etapų laimėta: <b>${t.stageWins}</b> · rungčių laimėta: ${t.raceWins} · ${t.races} rungt.<br>🎯 tikslūs: ${t.exact} · per vieną: ${t.adj} · top-6: ${t.top}</div></div>
+    <div class="lb-pts">${fmtPts(t.pts)}</div></div>`).join("")}
+    <div class="note" style="margin-top:6px">Lygių taškų atveju aukščiau – laimėjęs daugiau etapų, po to – daugiau tikslių pataikymų.</div></div>`;
+  if (stageRows.length) {
+    h += `<div class="card"><h3 style="margin:0 0 8px">Etapai</h3><table><tr><th>Etapas</th>${ps.map(p => `<th style="text-align:right">${esc(p)}</th>`).join("")}</tr>`;
+    for (const x of [...stageRows].reverse())
+      h += `<tr><td>${esc(x.st.name)}<div class="race-meta">${x.complete ? "baigtas" : `vyksta · ${x.done}/${x.st.races.length} rungt.`}</div></td>${ps.map((p, i) => `<td class="pts">${x.winners.includes(p) ? "🏆 " : ""}${fmtPts(x.pts[i])}</td>`).join("")}</tr>`;
+    h += `</table></div>`;
+    h += `<div class="card"><h3 style="margin:0 0 8px">Rungtys</h3><table><tr><th>Rungtis</th>${ps.map(p => `<th style="text-align:right">${esc(p)}</th>`).join("")}</tr>`;
     for (const r of [...doneRaces].reverse())
-      h += `<tr><td>${esc(r.name)}<div class="race-meta">${esc(r.stage)}</div></td>${ps.map(p => `<td class="pts">${score(r, pickOf(r, p)).pts}</td>`).join("")}</tr>`;
+      h += `<tr><td>${esc(r.name)}<div class="race-meta">${esc(r.stage)}${isChamp(r) ? " · ×" + fmtPts(raceMult(r)) : ""}</div></td>${ps.map(p => `<td class="pts">${fmtPts(score(r, pickOf(r, p)).pts)}</td>`).join("")}</tr>`;
     h += `</table></div>`;
   } else h += `<div class="note" style="padding:4px">Rezultatų dar nėra – lentelė pildysis po pirmų rungčių.</div>`;
   $("#tab-table").innerHTML = h;
 }
 
 function renderRules() {
-  const sc = S.config.scoring;
+  const I = S.config.scoring.individual, T = S.config.scoring.team, M = S.config.scoring.championshipMultiplier;
+  const col = (x, i) => x.exact[i];
   $("#tab-rules").innerHTML = `<div class="card">
     <h3 style="margin-top:0">Kaip žaidžiam</h3>
     <ul>
-      <li>Kiekvienai rungčiai kiekvienas spėja <b>top-6</b> (1–6 vietos).</li>
+      <li>Kiekvienai rungčiai kiekvienas spėja <b>top-6</b> (1–6 vietos), renkantis iš startų sąrašo.</li>
       <li>Spėjimą galima keisti iki starto. Po starto pasimato visų spėjimai; po starto pakeistas spėjimas neskaičiuojamas.</li>
       <li>Estafetėse spėjamos šalys.</li>
       <li>Startų sąrašai ir rezultatai – iš IBU (biathlonworld.com).</li>
     </ul>
     <h3>Taškai</h3>
+    <table class="rules-t">
+      <tr><th>Spėjimas</th><th style="text-align:right">Individualios</th><th style="text-align:right">Estafetės</th></tr>
+      <tr><td>Tiksli 1 vieta</td><td class="pts">${col(I,0)}</td><td class="pts">${col(T,0)}</td></tr>
+      <tr><td>Tiksli 2 vieta</td><td class="pts">${col(I,1)}</td><td class="pts">${col(T,1)}</td></tr>
+      <tr><td>Tiksli 3 vieta</td><td class="pts">${col(I,2)}</td><td class="pts">${col(T,2)}</td></tr>
+      <tr><td>Tiksli 4–6 vieta</td><td class="pts">${col(I,3)}</td><td class="pts">${col(T,3)}</td></tr>
+      <tr><td>Per vieną vietą (pvz. spėjai 2, baigė 1)</td><td class="pts">${I.adjacent}</td><td class="pts">${T.adjacent}</td></tr>
+      <tr><td>Pateko į top-6, bet toliau</td><td class="pts">${I.inTop6}</td><td class="pts">${T.inTop6}</td></tr>
+      <tr><td>🎁 Visas podiumas (1–3) tiksliai</td><td class="pts">+${I.podiumBonus}</td><td class="pts">+${T.podiumBonus}</td></tr>
+      <tr><td>🎁 Visi 6 pateko į top-6</td><td class="pts">+${I.top6Bonus}</td><td class="pts">+${T.top6Bonus}</td></tr>
+    </table>
     <ul>
-      <li>Tiksli vieta: <b>${sc.exact}</b> t.</li>
-      <li>Pateko į top-6, bet kita vieta: <b>${sc.inTop6}</b> t.</li>
-      ${sc.winnerBonus ? `<li>Bonusas už tiksliai atspėtą nugalėtoją: <b>${sc.winnerBonus}</b> t.</li>` : ""}
+      <li>Jei spėtas sportininkas baigė 7-as ar žemiau – 0 taškų.</li>
+      <li>Pasaulio čempionato rungtims taškai dauginami iš <b>${fmtPts(M)}</b>.</li>
+      <li>Lentelėje lygių taškų atveju aukščiau tas, kas <b>laimėjo daugiau etapų</b> (daugiausiai taškų etape), po to – daugiau tikslių pataikymų.</li>
     </ul>
-    <div class="note">${esc(S.config.rulesNote || "")}</div>
+    <h3>Pavyzdys</h3>
+    <div class="note">Spėjai: 1. A, 2. B, 3. C, 4. D, 5. E, 6. F. Rezultatas: 1. B, 2. A, 3. C, 4. G, 5. F, 6. D.<br>
+    A per vieną (${I.adjacent}) + B per vieną (${I.adjacent}) + C tiksliai 3-ia (${col(I,2)}) + D top-6 (${I.inTop6}) + E – (0) + F per vieną (${I.adjacent}) = <b>${I.adjacent*3 + col(I,2) + I.inTop6} t.</b></div>
+    ${S.config.rulesNote ? `<div class="note" style="margin-top:8px">${esc(S.config.rulesNote)}</div>` : ""}
   </div>`;
 }
 
