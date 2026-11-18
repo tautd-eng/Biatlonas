@@ -241,3 +241,14 @@ html[data-theme="pink"] .auth-card h3{font-family:Inter,sans-serif}
 html[data-theme="pink"] nav button,html[data-theme="pink"] .btn{font-family:Inter,sans-serif;font-size:14px;font-weight:600;letter-spacing:0}
 html[data-theme="pink"] .banner,html[data-theme="pink"] input,html[data-theme="pink"] select{font-family:Inter,sans-serif;font-size:14px}
 html[data-theme="pink"] .banner{font-weight:600}
+
+/* paspaudžiamas startų sąrašas */
+.sl-hint{font-size:12px;color:var(--muted);margin:0 0 6px}
+.col-sl .sl-pick{cursor:pointer;transition:background .12s}
+.col-sl .sl-pick:hover{background:var(--accent-soft)}
+.sl-place{display:none}
+.col-sl .sl-place{display:inline-flex}
+.sl-place{width:22px;height:22px;flex:0 0 22px;border-radius:50%;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;background:transparent;border:1.5px dashed var(--line)}
+.sl-pick.picked{background:var(--accent-soft)}
+.sl-pick.picked .sl-place{background:var(--accent);border:0}
+.sl-team.picked .sl-row{background:transparent}

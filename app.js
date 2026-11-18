@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=20";
+import { firebaseConfig } from "./firebase-config.js?v=21";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -243,6 +243,12 @@ function wireForms(box) {
         });
         f.elements["p" + i].dataset.prev = f.elements["p" + i].value;
       });
+      const lst = box.querySelector(`.startlist[data-race="${CSS.escape(f.dataset.race)}"]`);
+      if (lst) lst.querySelectorAll(".sl-pick").forEach(row => {
+        const j = chosen.indexOf(row.dataset.pick);
+        row.classList.toggle("picked", j >= 0);
+        row.querySelector(".sl-place").textContent = j >= 0 ? String(j + 1) : "";
+      });
     };
     // pasirinkus jau kitoje vietoje esantį – sukeičiam vietomis
     f.addEventListener("change", e => {
@@ -252,6 +258,18 @@ function wireForms(box) {
         if (j !== i && f.elements["p" + j].value === v) { f.elements["p" + j].value = prev; flash(f.elements["p" + j]); }
       }
       sync();
+    });
+    const list = box.querySelector(`.startlist[data-race="${CSS.escape(f.dataset.race)}"]`);
+    const msgEl = f.querySelector(".msg");
+    if (list) list.querySelectorAll(".sl-pick").forEach(row => row.onclick = () => {
+      const name = row.dataset.pick;
+      const sels = [0,1,2,3,4,5].map(i => f.elements["p" + i]);
+      const at = sels.findIndex(x => x.value === name);
+      if (at >= 0) { sels[at].value = ""; flash(sels[at]); sync(); return; }
+      const free = sels.find(x => !x.value);
+      if (!free) { msgEl.className = "msg err"; msgEl.textContent = "Visos 6 vietos užimtos – pirma išimk ką nors (paspausk ant jo sąraše)."; return; }
+      free.value = name; flash(free); sync();
+      msgEl.className = "msg"; msgEl.textContent = "Nepamiršk paspausti „Pateikti spėjimą“.";
     });
     f.querySelectorAll(".mv").forEach(b => b.onclick = () => {
       const i = Number(b.dataset.i), j = i + Number(b.dataset.d);
@@ -319,12 +337,13 @@ function startlistBlock(r, open) {
       const mem = (a.members || []).length
         ? `<ol class="sl-members">${a.members.map(m => `<li>${esc(m)}</li>`).join("")}</ol>`
         : `<div class="sl-sub">sudėtis dar neskelbta</div>`;
-      return `<div class="sl-team"><div class="sl-row"><span class="sl-bib">${esc(a.bib ?? "")}</span><span class="sl-name">${esc(a.name)}</span><span class="sl-nat">${esc(a.nat || "")}</span></div>${mem}</div>`;
+      return `<div class="sl-team sl-pick" data-pick="${esc(a.name)}"><div class="sl-row"><span class="sl-place"></span><span class="sl-bib">${esc(a.bib ?? "")}</span><span class="sl-name">${esc(a.name)}</span><span class="sl-nat">${esc(a.nat || "")}</span></div>${mem}</div>`;
     }
-    return `<div class="sl-row"><span class="sl-bib">${esc(a.bib ?? "")}</span><span class="sl-name">${esc(a.name)}</span><span class="sl-nat">${esc(a.nat || "")}</span>${pursuit ? `<span class="sl-behind">${esc(a.behind || "")}</span>` : ""}</div>`;
+    return `<div class="sl-row sl-pick" data-pick="${esc(a.name)}"><span class="sl-place"></span><span class="sl-bib">${esc(a.bib ?? "")}</span><span class="sl-name">${esc(a.name)}</span><span class="sl-nat">${esc(a.nat || "")}</span>${pursuit ? `<span class="sl-behind">${esc(a.behind || "")}</span>` : ""}</div>`;
   }).join("");
   const title = r.team ? `Komandos ir sudėtys (${sl.length})` : `Startų sąrašas (${sl.length})${pursuit ? " · atsilikimas starte" : ""}`;
-  return `<details class="startlist"${open ? " open" : ""}><summary>${title}</summary><div class="sl-box">${rows}</div></details>`;
+  const hint = open && !isLocked(r) ? `<div class="sl-hint">👆 Paspausk ant sportininko – jis įkeliamas į pirmą laisvą vietą. Paspaudus dar kartą – išimamas.</div>` : "";
+  return `<details class="startlist" data-race="${esc(r.id)}"${open ? " open" : ""}><summary>${title}</summary>${hint}<div class="sl-box">${rows}</div></details>`;
 }
 
 function renderTable() {
