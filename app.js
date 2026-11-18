@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=3";
+import { firebaseConfig } from "./firebase-config.js?v=4";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -110,7 +110,13 @@ function renderRaces() {
   });
   box.querySelectorAll("form[data-race]").forEach(f => {
     f.onsubmit = savePicks;
+    const race = S.races.find(x => x.id === f.dataset.race);
     const sync = () => {
+      if (race && race.team) [0,1,2,3,4,5].forEach(i => {
+        const sel = f.elements["p" + i], box = sel.parentElement.querySelector(".members");
+        const a = (race.startlist || []).find(x => x.name === sel.value);
+        if (box) box.textContent = a && a.members ? a.members.join(" · ") : "";
+      });
       const chosen = [0,1,2,3,4,5].map(i => f.elements["p" + i].value);
       [0,1,2,3,4,5].forEach(i => {
         [...f.elements["p" + i].options].forEach(o => {
@@ -155,12 +161,19 @@ function raceBody(r, locked, done) {
     } else {
       const label = a => (a.bib ? "#" + a.bib + " " : "") + a.name + (a.nat && !r.team ? " (" + a.nat + ")" : "");
       h += `<form data-race="${esc(r.id)}"><div class="picks-form">`;
+      const membersOf = n => { const a = sl.find(x => x.name === n); return a && a.members && a.members.length ? a.members.join(" · ") : ""; };
       for (let i = 0; i < 6; i++) {
-        h += `<label>${i + 1}</label><select name="p${i}"><option value="">— pasirink —</option>` +
+        h += `<label>${i + 1}</label><div><select name="p${i}"><option value="">— pasirink —</option>` +
           sl.map(a => `<option value="${esc(a.name)}"${a.name === mine[i] ? " selected" : ""}>${esc(label(a))}</option>`).join("") +
-          `</select>`;
+          `</select>${r.team ? `<div class="members">${esc(membersOf(mine[i]))}</div>` : ""}</div>`;
       }
-      h += `</div><button class="btn">${saved.length ? "Atnaujinti spėjimą" : "Pateikti spėjimą"}</button>
+      h += `</div>`;
+      if (r.team && sl.some(a => a.members && a.members.length)) {
+        h += `<details class="teams"><summary>Komandų sudėtys</summary>` +
+          sl.map(a => `<div class="team-row"><b>${a.bib ? "#" + esc(a.bib) + " " : ""}${esc(a.name)}</b><span>${esc((a.members || []).join(" · ") || "sudėtis dar neskelbta")}</span></div>`).join("") +
+          `</details>`;
+      }
+      h += `<button class="btn">${saved.length ? "Atnaujinti spėjimą" : "Pateikti spėjimą"}</button>
         <div class="msg">Spėjimas užsirakina rungties starto metu. Kitų spėjimai matosi tik po starto.</div></form>`;
     }
   } else {

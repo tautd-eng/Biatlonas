@@ -64,3 +64,9 @@ td.pts{font-weight:700;text-align:right}
 .center{text-align:center;padding:20px}
 .status{padding:10px 14px;font-size:13px;color:var(--warn);text-align:center}
 .hidden{display:none !important}
+.members{font-size:12px;color:var(--muted);margin:3px 2px 0;min-height:0}
+.members:empty{display:none}
+.teams{margin-top:12px;font-size:13px}
+.teams summary{cursor:pointer;color:var(--accent);font-weight:600;margin-bottom:6px}
+.team-row{display:flex;flex-direction:column;padding:6px 0;border-bottom:1px solid var(--line)}
+.team-row span{color:var(--muted)}

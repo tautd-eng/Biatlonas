@@ -285,62 +285,134 @@
     {
      "name": "Norway",
      "nat": "",
-     "bib": 1
+     "bib": 1,
+     "members": [
+      "Sturla Holm LAEGREID",
+      "Endre STROEMSHEIM",
+      "Tarjei BOE",
+      "Johannes DALE-SKJEVDAL"
+     ]
     },
     {
      "name": "France",
      "nat": "",
-     "bib": 2
+     "bib": 2,
+     "members": [
+      "Fabien CLAUDE",
+      "Emilien JACQUELIN",
+      "Quentin FILLON MAILLET",
+      "Eric PERROT"
+     ]
     },
     {
      "name": "Sweden",
      "nat": "",
-     "bib": 3
+     "bib": 3,
+     "members": [
+      "Viktor BRANDT",
+      "Jesper NELIN",
+      "Martin PONSILUOMA",
+      "Sebastian SAMUELSSON"
+     ]
     },
     {
      "name": "Germany",
      "nat": "",
-     "bib": 4
+     "bib": 4,
+     "members": [
+      "Justus STRELOW",
+      "Johannes KUEHN",
+      "Philipp HORN",
+      "Philipp NAWRATH"
+     ]
     },
     {
      "name": "Italy",
      "nat": "",
-     "bib": 5
+     "bib": 5,
+     "members": [
+      "Didier BIONAZ",
+      "Lukas HOFER",
+      "Elia ZENI",
+      "Tommaso GIACOMEL"
+     ]
     },
     {
      "name": "Czechia",
      "nat": "",
-     "bib": 6
+     "bib": 6,
+     "members": [
+      "Jonas MAREČEK",
+      "Mikulas KARLIK",
+      "Vitezslav HORNIG",
+      "Michal KRCMAR"
+     ]
     },
     {
      "name": "Switzerland",
      "nat": "",
-     "bib": 7
+     "bib": 7,
+     "members": [
+      "Joscha BURKHALTER",
+      "Jeremy FINELLO",
+      "Sebastian STALDER",
+      "Niklas HARTWEG"
+     ]
     },
     {
      "name": "Finland",
      "nat": "",
-     "bib": 8
+     "bib": 8,
+     "members": [
+      "Otto INVENIUS",
+      "Jaakko RANTA",
+      "Tero SEPPALA",
+      "Olli HIIDENSALO"
+     ]
     },
     {
      "name": "Austria",
      "nat": "",
-     "bib": 9
+     "bib": 9,
+     "members": [
+      "David KOMATZ",
+      "Patrick JAKOB",
+      "Felix LEITNER",
+      "Simon EDER"
+     ]
     },
     {
      "name": "USA",
      "nat": "",
-     "bib": 10
+     "bib": 10,
+     "members": [
+      "Maxime GERMAIN",
+      "Paul SCHOMMER",
+      "Sean DOHERTY",
+      "Campbell WRIGHT"
+     ]
     },
     {
      "name": "Slovenia",
      "nat": "",
-     "bib": 11
+     "bib": 11,
+     "members": [
+      "Lovro PLANKO",
+      "Alex CISAR",
+      "Anton VIDMAR",
+      "Jakov FAK"
+     ]
     },
     {
      "name": "Lithuania",
      "nat": "",
-     "bib": 12
+     "bib": 12,
+     "members": [
+      "Maksim FOMIN",
+      "Nikita ČIGAK",
+      "Karol DOMBROVSKI",
+      "Vytautas STROLIA"
+     ]
     }
    ],
    "favorites": [
@@ -349,7 +421,8 @@
     "Sweden",
     "Germany"
    ],
-   "result": []
+   "result": [],
+   "note": "Bandomoji estafetė – sudėtys sugalvotos."
   }
  ]
 }
