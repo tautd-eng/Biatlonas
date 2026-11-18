@@ -1,0 +1,18 @@
+{
+  "season": "2026/27",
+  "updated": "2026-11-18T19:00:00Z",
+  "races": [
+    {"id":"2627-KON-IN-M","stage":"1 etapas · Kontiolahti (FIN)","name":"Vyrų 20 km individuali","start":"2026-11-26T15:10:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
+    {"id":"2627-KON-IN-W","stage":"1 etapas · Kontiolahti (FIN)","name":"Moterų 15 km individuali","start":"2026-11-27T15:10:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
+    {"id":"2627-KON-SMR","stage":"1 etapas · Kontiolahti (FIN)","name":"Single mišri estafetė","start":"2026-11-28T12:10:00Z","team":true,"startlist":[],"favorites":[],"result":[]},
+    {"id":"2627-KON-MR","stage":"1 etapas · Kontiolahti (FIN)","name":"Mišri estafetė","start":"2026-11-28T14:15:00Z","team":true,"startlist":[],"favorites":[],"result":[]},
+    {"id":"2627-KON-SP-M","stage":"1 etapas · Kontiolahti (FIN)","name":"Vyrų 10 km sprintas","start":"2026-11-29T12:00:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
+    {"id":"2627-KON-SP-W","stage":"1 etapas · Kontiolahti (FIN)","name":"Moterų 7,5 km sprintas","start":"2026-11-29T15:15:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
+    {"id":"2627-HOC-SP-W","stage":"2 etapas · Hochfilzen (AUT)","name":"Moterų 7,5 km sprintas","start":"2026-12-04T10:25:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
+    {"id":"2627-HOC-SP-M","stage":"2 etapas · Hochfilzen (AUT)","name":"Vyrų 10 km sprintas","start":"2026-12-04T13:15:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
+    {"id":"2627-HOC-PU-W","stage":"2 etapas · Hochfilzen (AUT)","name":"Moterų 10 km persekiojimas","start":"2026-12-05T11:15:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
+    {"id":"2627-HOC-PU-M","stage":"2 etapas · Hochfilzen (AUT)","name":"Vyrų 12,5 km persekiojimas","start":"2026-12-05T13:30:00Z","team":false,"startlist":[],"favorites":[],"result":[]},
+    {"id":"2627-HOC-RL-W","stage":"2 etapas · Hochfilzen (AUT)","name":"Moterų estafetė 4×6 km","start":"2026-12-06T10:30:00Z","team":true,"startlist":[],"favorites":[],"result":[]},
+    {"id":"2627-HOC-RL-M","stage":"2 etapas · Hochfilzen (AUT)","name":"Vyrų estafetė 4×7,5 km","start":"2026-12-06T13:15:00Z","team":true,"startlist":[],"favorites":[],"result":[]}
+  ]
+}

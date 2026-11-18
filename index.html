@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biatlono totalizatorius 2026/27</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="top">
+    <div>
+      <h1>🎯 Biatlono totalizatorius</h1>
+      <div class="sub">IBU pasaulio taurė 2026/27 · spėjamas top-6</div>
+    </div>
+    <button id="logout" class="link hidden">Atsijungti</button>
+  </div>
+  <div class="me" id="me"></div>
+</header>
+
+<!-- prisijungimas -->
+<section id="auth" class="hidden">
+  <div class="card auth-card">
+    <div class="auth-tabs">
+      <button data-mode="login" class="on">Prisijungti</button>
+      <button data-mode="register">Registruotis</button>
+    </div>
+    <form id="auth-form">
+      <input type="email" name="email" placeholder="El. paštas" autocomplete="email" required>
+      <input type="password" name="password" placeholder="Slaptažodis (min. 6 simboliai)" autocomplete="current-password" minlength="6" required>
+      <button class="btn" type="submit" id="auth-submit">Prisijungti</button>
+      <button class="link" type="button" id="reset">Pamiršau slaptažodį</button>
+      <div class="msg" id="auth-msg"></div>
+    </form>
+  </div>
+</section>
+
+<!-- vardo pasirinkimas -->
+<section id="claim" class="hidden">
+  <div class="card auth-card">
+    <h3>Kas tu esi?</h3>
+    <p class="note">Pasirink savo vardą. Jis bus visam laikui susietas su tavo paskyra.</p>
+    <div id="claim-list" class="claim-list"></div>
+    <div class="msg" id="claim-msg"></div>
+  </div>
+</section>
+
+<nav id="nav" class="hidden">
+  <button data-tab="races" class="on">Rungtys</button>
+  <button data-tab="table">Lentelė</button>
+  <button data-tab="rules">Taisyklės</button>
+</nav>
+<div class="status hidden" id="status"></div>
+<main id="app" class="hidden">
+  <section id="tab-races"><div class="note center">Kraunama…</div></section>
+  <section id="tab-table" class="hidden"></section>
+  <section id="tab-rules" class="hidden"></section>
+</main>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

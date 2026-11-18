@@ -1,0 +1,5 @@
+{
+  "players": ["Tautvydas", "Vitalija", "Vitalis"],
+  "scoring": { "exact": 3, "inTop6": 1, "winnerBonus": 0 },
+  "rulesNote": "Taškų sistema laikina – sutarsim vėliau."
+}

@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function players() { return ['Tautvydas', 'Vitalija', 'Vitalis']; }
+    function claimPath(uid) { return /databases/$(database)/documents/claims/$(uid); }
+    function playerPath(name) { return /databases/$(database)/documents/players/$(name); }
+
+    // players/{vardas} = {uid}: kas prisiėmė vardą. Prisiimti galima tik vieną kartą, keisti negalima.
+    match /players/{name} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && name in players()
+        && request.resource.data.keys().hasOnly(['uid', 'claimedAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.claimedAt == request.time
+        && getAfter(claimPath(request.auth.uid)).data.name == name;
+      allow update, delete: if false;
+    }
+
+    // claims/{uid} = {name}: viena paskyra – vienas vardas.
+    match /claims/{uid} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['name'])
+        && request.resource.data.name in players()
+        && getAfter(playerPath(request.resource.data.name)).data.uid == uid;
+      allow update, delete: if false;
+    }
+
+    // picks/{raceId}__{uid}: kiekvienas rašo tik savo spėjimus.
+    // updatedAt privalo būti serverio laikas – pavėluoti (po starto) spėjimai puslapyje neskaičiuojami.
+    match /picks/{pickId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn()
+        && exists(claimPath(request.auth.uid))
+        && request.resource.data.keys().hasOnly(['uid', 'name', 'raceId', 'picks', 'updatedAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.name == get(claimPath(request.auth.uid)).data.name
+        && pickId == request.resource.data.raceId + '__' + request.auth.uid
+        && request.resource.data.picks is list
+        && request.resource.data.picks.size() <= 6
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+  }
+}
