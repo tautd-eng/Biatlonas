@@ -70,3 +70,15 @@ td.pts{font-weight:700;text-align:right}
 .teams summary{cursor:pointer;color:var(--accent);font-weight:600;margin-bottom:6px}
 .team-row{display:flex;flex-direction:column;padding:6px 0;border-bottom:1px solid var(--line)}
 .team-row span{color:var(--muted)}
+.startlist{margin:12px 0 14px;font-size:14px}
+.startlist summary{cursor:pointer;color:var(--accent);font-weight:600;margin-bottom:6px}
+.sl-box{max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:8px}
+.sl-row{display:flex;gap:8px;align-items:baseline;padding:6px 10px;border-bottom:1px solid var(--line)}
+.sl-team{border-bottom:1px solid var(--line)}
+.sl-team .sl-row{border-bottom:0;padding-bottom:2px}
+.sl-bib{width:26px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.sl-name{flex:1;font-weight:500}
+.sl-nat{color:var(--muted);font-size:12px}
+.sl-behind{width:62px;text-align:right;font-variant-numeric:tabular-nums;color:var(--warn);font-weight:600}
+.sl-members{margin:0 10px 8px 44px;padding-left:18px;color:var(--muted);font-size:13px}
+.sl-sub{margin:0 10px 8px 44px;color:var(--muted);font-size:12px}

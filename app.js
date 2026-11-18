@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=4";
+import { firebaseConfig } from "./firebase-config.js?v=5";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -156,10 +156,11 @@ function raceBody(r, locked, done) {
     const saved = (pickOf(r, S.myName) || {}).picks || [];
     const mine = drafts[r.id] || saved;
     const sl = [...(r.startlist || [])].sort((a, b) => (Number(a.bib) || 999) - (Number(b.bib) || 999));
+    h += startlistBlock(r, true);
     if (!sl.length) {
       h += `<div class="note">⏳ Startų sąrašas dar nepaskelbtas. Spėti bus galima, kai IBU jį paskelbs (dažniausiai dieną prieš rungtį).</div>`;
     } else {
-      const label = a => (a.bib ? "#" + a.bib + " " : "") + a.name + (a.nat && !r.team ? " (" + a.nat + ")" : "");
+      const label = a => (a.bib ? "#" + a.bib + " " : "") + a.name + (a.nat && !r.team ? " (" + a.nat + ")" : "") + (a.behind ? " " + a.behind : "");
       h += `<form data-race="${esc(r.id)}"><div class="picks-form">`;
       const membersOf = n => { const a = sl.find(x => x.name === n); return a && a.members && a.members.length ? a.members.join(" · ") : ""; };
       for (let i = 0; i < 6; i++) {
@@ -168,11 +169,6 @@ function raceBody(r, locked, done) {
           `</select>${r.team ? `<div class="members">${esc(membersOf(mine[i]))}</div>` : ""}</div>`;
       }
       h += `</div>`;
-      if (r.team && sl.some(a => a.members && a.members.length)) {
-        h += `<details class="teams"><summary>Komandų sudėtys</summary>` +
-          sl.map(a => `<div class="team-row"><b>${a.bib ? "#" + esc(a.bib) + " " : ""}${esc(a.name)}</b><span>${esc((a.members || []).join(" · ") || "sudėtis dar neskelbta")}</span></div>`).join("") +
-          `</details>`;
-      }
       h += `<button class="btn">${saved.length ? "Atnaujinti spėjimą" : "Pateikti spėjimą"}</button>
         <div class="msg">Spėjimas užsirakina rungties starto metu. Kitų spėjimai matosi tik po starto.</div></form>`;
     }
@@ -190,8 +186,26 @@ function raceBody(r, locked, done) {
     h += `</table>`;
     if (done) h += `<div class="msg"><span class="hit-exact">Žalia</span> – tiksli vieta, <span class="hit-top">auksinė</span> – pateko į top-6.</div>`;
     if (sc.some(x => x.pk && x.pk.late)) h += `<div class="msg"><span class="late">Perbraukta</span> – spėjimas pakeistas po starto, neskaičiuojamas.</div>`;
+    h += startlistBlock(r, false);
   }
   return h;
+}
+
+function startlistBlock(r, open) {
+  const sl = [...(r.startlist || [])].sort((a, b) => (Number(a.bib) || 999) - (Number(b.bib) || 999));
+  if (!sl.length) return "";
+  const pursuit = sl.some(a => a.behind);
+  const rows = sl.map(a => {
+    if (r.team) {
+      const mem = (a.members || []).length
+        ? `<ol class="sl-members">${a.members.map(m => `<li>${esc(m)}</li>`).join("")}</ol>`
+        : `<div class="sl-sub">sudėtis dar neskelbta</div>`;
+      return `<div class="sl-team"><div class="sl-row"><span class="sl-bib">${esc(a.bib ?? "")}</span><span class="sl-name">${esc(a.name)}</span><span class="sl-nat">${esc(a.nat || "")}</span></div>${mem}</div>`;
+    }
+    return `<div class="sl-row"><span class="sl-bib">${esc(a.bib ?? "")}</span><span class="sl-name">${esc(a.name)}</span><span class="sl-nat">${esc(a.nat || "")}</span>${pursuit ? `<span class="sl-behind">${esc(a.behind || "")}</span>` : ""}</div>`;
+  }).join("");
+  const title = r.team ? `Komandos ir sudėtys (${sl.length})` : `Startų sąrašas (${sl.length})${pursuit ? " · atsilikimas starte" : ""}`;
+  return `<details class="startlist"${open ? " open" : ""}><summary>${title}</summary><div class="sl-box">${rows}</div></details>`;
 }
 
 function renderTable() {

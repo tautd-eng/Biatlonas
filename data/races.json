@@ -423,6 +423,172 @@
    ],
    "result": [],
    "note": "Bandomoji estafetė – sudėtys sugalvotos."
+  },
+  {
+   "id": "TEST-PU-M",
+   "stage": "🧪 TESTAS (bus ištrinta)",
+   "name": "Vyrų 12,5 km persekiojimas (testas)",
+   "start": "2026-11-21T16:00:00Z",
+   "team": false,
+   "startlist": [
+    {
+     "name": "Emilien JACQUELIN",
+     "nat": "FRA",
+     "bib": 1,
+     "behind": ""
+    },
+    {
+     "name": "Jakov FAK",
+     "nat": "SLO",
+     "bib": 2,
+     "behind": "+0:10"
+    },
+    {
+     "name": "Sebastian STALDER",
+     "nat": "SUI",
+     "bib": 3,
+     "behind": "+0:18"
+    },
+    {
+     "name": "Simon EDER",
+     "nat": "AUT",
+     "bib": 4,
+     "behind": "+0:31"
+    },
+    {
+     "name": "Sturla Holm LAEGREID",
+     "nat": "NOR",
+     "bib": 5,
+     "behind": "+0:33"
+    },
+    {
+     "name": "Eric PERROT",
+     "nat": "FRA",
+     "bib": 6,
+     "behind": "+0:45"
+    },
+    {
+     "name": "Philipp NAWRATH",
+     "nat": "GER",
+     "bib": 7,
+     "behind": "+0:59"
+    },
+    {
+     "name": "Martin PONSILUOMA",
+     "nat": "SWE",
+     "bib": 8,
+     "behind": "+1:02"
+    },
+    {
+     "name": "Sebastian SAMUELSSON",
+     "nat": "SWE",
+     "bib": 9,
+     "behind": "+1:06"
+    },
+    {
+     "name": "Justus STRELOW",
+     "nat": "GER",
+     "bib": 10,
+     "behind": "+1:20"
+    },
+    {
+     "name": "Karol DOMBROVSKI",
+     "nat": "LTU",
+     "bib": 11,
+     "behind": "+1:31"
+    },
+    {
+     "name": "Olli HIIDENSALO",
+     "nat": "FIN",
+     "bib": 12,
+     "behind": "+1:33"
+    },
+    {
+     "name": "Philipp HORN",
+     "nat": "GER",
+     "bib": 13,
+     "behind": "+1:39"
+    },
+    {
+     "name": "Vetle Sjaastad CHRISTIANSEN",
+     "nat": "NOR",
+     "bib": 14,
+     "behind": "+1:53"
+    },
+    {
+     "name": "Lukas HOFER",
+     "nat": "ITA",
+     "bib": 15,
+     "behind": "+1:55"
+    },
+    {
+     "name": "Fabien CLAUDE",
+     "nat": "FRA",
+     "bib": 16,
+     "behind": "+2:01"
+    },
+    {
+     "name": "Niklas HARTWEG",
+     "nat": "SUI",
+     "bib": 17,
+     "behind": "+2:10"
+    },
+    {
+     "name": "Johannes DALE-SKJEVDAL",
+     "nat": "NOR",
+     "bib": 18,
+     "behind": "+2:21"
+    },
+    {
+     "name": "Tarjei BOE",
+     "nat": "NOR",
+     "bib": 19,
+     "behind": "+2:34"
+    },
+    {
+     "name": "Vytautas STROLIA",
+     "nat": "LTU",
+     "bib": 20,
+     "behind": "+2:42"
+    },
+    {
+     "name": "Tommaso GIACOMEL",
+     "nat": "ITA",
+     "bib": 21,
+     "behind": "+2:55"
+    },
+    {
+     "name": "Vitezslav HORNIG",
+     "nat": "CZE",
+     "bib": 22,
+     "behind": "+3:09"
+    },
+    {
+     "name": "Jesper NELIN",
+     "nat": "SWE",
+     "bib": 23,
+     "behind": "+3:17"
+    },
+    {
+     "name": "Endre STROEMSHEIM",
+     "nat": "NOR",
+     "bib": 24,
+     "behind": "+3:25"
+    },
+    {
+     "name": "Campbell WRIGHT",
+     "nat": "USA",
+     "bib": 25,
+     "behind": "+3:38"
+    }
+   ],
+   "favorites": [
+    "Emilien JACQUELIN",
+    "Jakov FAK",
+    "Sebastian STALDER"
+   ],
+   "result": [],
+   "note": "Bandomasis persekiojimas – atsilikimai sugalvoti."
   }
  ]
 }
