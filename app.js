@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=6";
+import { firebaseConfig } from "./firebase-config.js?v=7";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -94,27 +94,86 @@ function renderMe() {
   $("#logout").classList.toggle("hidden", !S.user);
 }
 
+const stageKey = st => norm(st).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+function stagesList() {
+  const sorted = [...S.races].sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
+  const map = new Map();
+  for (const r of sorted) {
+    const k = stageKey(r.stage);
+    if (!map.has(k)) map.set(k, { key: k, name: r.stage, races: [] });
+    map.get(k).races.push(r);
+  }
+  return [...map.values()];
+}
+function parseRoute() {
+  const m = location.hash.match(/^#s-([^~]+)(?:~(.+))?$/);
+  return m ? { stage: m[1], race: m[2] ? decodeURIComponent(m[2]) : null } : null;
+}
+
 function renderRaces() {
   captureDrafts();
   const box = $("#tab-races");
   if (!S.races.length) { box.innerHTML = `<div class="card note">Rungčių dar nėra.</div>`; return; }
-  const routeId = (location.hash.match(/^#r-(.+)$/) || [])[1];
-  const routeRace = routeId && S.races.find(r => r.id === decodeURIComponent(routeId));
-  $("#nav").classList.toggle("hidden", !!routeRace);
-  if (routeRace) {
+  const stages = stagesList();
+  const route = parseRoute();
+  const st = route && stages.find(x => x.key === route.stage);
+  $("#nav").classList.toggle("hidden", !!st);
+  if (st) {
     ["races", "table", "rules"].forEach(t => $("#tab-" + t).classList.toggle("hidden", t !== "races"));
-    box.innerHTML = detailView(routeRace);
+    box.innerHTML = stageView(st, route.race);
     wireForms(box);
     return;
   }
-  const sorted = [...S.races].sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
-  let html = "", stage = null;
-  for (const r of sorted) {
-    if (r.stage !== stage) { stage = r.stage; html += `<div class="stage">${esc(stage)}</div>`; }
-    html += raceCard(r);
-  }
-  box.innerHTML = html;
-  wireForms(box);
+  box.innerHTML = stages.map(stageCard).join("");
+}
+
+function stageCard(st) {
+  const first = st.races[0], last = st.races[st.races.length - 1];
+  const d = iso => new Date(iso).toLocaleDateString("lt-LT", { month: "short", day: "numeric" });
+  const allDone = st.races.every(hasResult), anyOpen = st.races.some(r => !isLocked(r));
+  const mine = st.races.filter(r => pickOf(r, S.myName)).length;
+  const toPick = st.races.filter(r => !isLocked(r) && (r.startlist || []).length && !pickOf(r, S.myName)).length;
+  const badge = allDone ? `<span class="badge b-done">Baigtas</span>` : anyOpen ? `<span class="badge b-open">Vyksta / artėja</span>` : `<span class="badge b-live">Laukiam rezultatų</span>`;
+  const pts = players().map(p => `<span class="chip">${esc(p)}: ${st.races.reduce((s, r) => s + score(r, pickOf(r, p)).pts, 0)} t.</span>`).join("");
+  return `<a class="card stage-card" href="#s-${st.key}">
+    <div class="race-head"><div>
+      <div class="race-title big">${esc(st.name)}</div>
+      <div class="race-meta">${d(first.start)} – ${d(last.start)} · ${st.races.length} rungt. · tavo spėjimų ${mine}/${st.races.length}</div>
+    </div>${badge}</div>
+    <div class="chips">${pts}</div>
+    ${toPick ? `<div class="to-pick">✍️ Laukia tavo spėjimo: ${toPick}</div>` : ""}
+  </a>`;
+}
+
+function stageView(st, raceId) {
+  let r = raceId && st.races.find(x => x.id === raceId);
+  if (!r) r = st.races.find(x => !isLocked(x)) || st.races[st.races.length - 1];
+  const tabs = st.races.map(x => {
+    const mine = pickOf(x, S.myName);
+    const dot = hasResult(x) ? "✓" : isLocked(x) ? "🔒" : mine ? "●" : "○";
+    const t = new Date(x.start);
+    return `<a class="rtab${x === r ? " on" : ""}" href="#s-${st.key}~${encodeURIComponent(x.id)}">
+      <span class="rtab-name">${dot} ${esc(x.name)}</span>
+      <span class="rtab-time">${t.toLocaleDateString("lt-LT", { weekday: "short", day: "numeric" })} ${t.toLocaleTimeString("lt-LT", { hour: "2-digit", minute: "2-digit" })}</span></a>`;
+  }).join("");
+  const locked = isLocked(r), done = hasResult(r);
+  const badge = done ? `<span class="badge b-done">Rezultatai</span>`
+    : locked ? `<span class="badge b-live">Užrakinta</span>` : `<span class="badge b-open">Atvira</span>`;
+  const chips = players().map(p => {
+    const pk = pickOf(r, p);
+    if (done && pk) return `<span class="chip ok">${esc(p)}: ${score(r, pk).pts} t.</span>`;
+    return `<span class="chip ${pk && !pk.late ? "ok" : ""}">${esc(p)} ${pk && !pk.late ? "✓" : "–"}</span>`;
+  }).join("");
+  return `<a class="back" href="#">← Visi etapai</a>
+    <div class="stage-title">${esc(st.name)}</div>
+    <div class="rtabs">${tabs}</div>
+    <div class="card">
+      <div class="race-head"><div>
+        <div class="race-title big">${esc(r.name)}</div>
+        <div class="race-meta">${fmtTime(r.start)} (LT laiku)</div></div>${badge}</div>
+      <div class="chips">${chips}</div>
+      <div class="body">${raceBody(r, locked, done)}</div>
+    </div>`;
 }
 
 function wireForms(box) {
@@ -136,41 +195,6 @@ function wireForms(box) {
     };
     f.addEventListener("change", sync); sync();
   });
-}
-
-function raceCard(r) {
-  const locked = isLocked(r), done = hasResult(r);
-  const badge = done ? `<span class="badge b-done">Rezultatai</span>`
-    : locked ? `<span class="badge b-live">Užrakinta</span>` : `<span class="badge b-open">Atvira</span>`;
-  const chips = players().map(p => {
-    const pk = pickOf(r, p);
-    if (done && pk) return `<span class="chip ok">${esc(p)}: ${score(r, pk).pts} t.</span>`;
-    return `<span class="chip ${pk && !pk.late ? "ok" : ""}">${esc(p)} ${pk && !pk.late ? "✓" : "–"}</span>`;
-  }).join("");
-  const mine = pickOf(r, S.myName);
-  const cta = !locked ? (!(r.startlist || []).length ? "Startų sąrašas ↗" : mine ? "Keisti spėjimą ↗" : "Spėti ↗") : done ? "Rezultatai ↗" : "Visų spėjimai ↗";
-  return `<div class="card">
-    <div class="race-head">
-      <div><div class="race-title">${esc(r.name)}</div>
-      <div class="race-meta">${fmtTime(r.start)} (LT laiku)${r.startlist && r.startlist.length ? ` · ${r.startlist.length} startuoja` : ""}</div></div>
-      ${badge}
-    </div>
-    <div class="card-foot"><div class="chips">${chips}</div>
-      <a class="btn open-btn${!locked && (r.startlist || []).length && !mine ? "" : " ghost"}" href="#r-${encodeURIComponent(r.id)}" target="_blank" rel="noopener">${cta}</a></div>
-  </div>`;
-}
-
-function detailView(r) {
-  const locked = isLocked(r), done = hasResult(r);
-  const badge = done ? `<span class="badge b-done">Rezultatai</span>`
-    : locked ? `<span class="badge b-live">Užrakinta</span>` : `<span class="badge b-open">Atvira</span>`;
-  return `<a class="back" href="#">← Visos rungtys</a>
-    <div class="card">
-      <div class="race-head"><div><div class="race-meta">${esc(r.stage)}</div>
-        <div class="race-title big">${esc(r.name)}</div>
-        <div class="race-meta">${fmtTime(r.start)} (LT laiku)</div></div>${badge}</div>
-      <div class="body">${raceBody(r, locked, done)}</div>
-    </div>`;
 }
 
 function raceBody(r, locked, done) {
