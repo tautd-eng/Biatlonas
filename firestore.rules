@@ -38,8 +38,8 @@ service cloud.firestore {
         && exists(claimPath(request.auth.uid))
         && request.resource.data.keys().hasOnly(['uid', 'name', 'raceId', 'picks', 'ltu', 'updatedAt'])
         && (!('ltu' in request.resource.data) || (request.resource.data.ltu is map
-             && request.resource.data.ltu.keys().hasOnly(['place', 'tol'])
-             && request.resource.data.ltu.place is int && request.resource.data.ltu.tol in [0, 2, 5, 10]))
+             && request.resource.data.ltu.keys().hasOnly(['top'])
+             && request.resource.data.ltu.top in [3, 5, 6, 10, 15, 20, 30, 40, 60]))
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.name == get(claimPath(request.auth.uid)).data.name
         && pickId == request.resource.data.raceId + '__' + request.auth.uid

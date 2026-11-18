@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=24";
+import { firebaseConfig } from "./firebase-config.js?v=25";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -48,17 +48,16 @@ const isChamp = r => r.championship === true || /čempionat/i.test(r.stage || ""
 const raceMult = r => isChamp(r) ? (S.config.scoring.championshipMultiplier || 1) : 1;
 const fmtPts = x => (Math.round(x * 10) / 10).toString().replace(".", ",");
 // 🇱🇹 geriausio lietuvio vieta: kuo siauresnis intervalas – tuo daugiau taškų
-const LTU_TIERS = [
-  { tol: 0, pts: 6, label: "Tiksliai ta vieta" },
-  { tol: 2, pts: 4, label: "±2 vietos" },
-  { tol: 5, pts: 2, label: "±5 vietos" },
-  { tol: 10, pts: 1, label: "±10 vietų" },
-];
+const LTU_TIERS = {
+  individual: [{ top: 5, pts: 10 }, { top: 10, pts: 6 }, { top: 20, pts: 4 }, { top: 30, pts: 3 }, { top: 40, pts: 2 }, { top: 60, pts: 1 }],
+  team: [{ top: 3, pts: 10 }, { top: 6, pts: 6 }, { top: 10, pts: 4 }, { top: 15, pts: 2 }, { top: 20, pts: 1 }],
+};
+const ltuTiers = r => r.team ? LTU_TIERS.team : LTU_TIERS.individual;
 const hasLTU = r => (r.startlist || []).some(a => a.nat === "LTU" || /lietuv|lithuan/i.test(a.name));
 function ltuPoints(race, pk) {
   if (!pk || pk.late || !pk.ltu || typeof race.ltuPlace !== "number") return 0;
-  const t = LTU_TIERS.find(x => x.tol === pk.ltu.tol); if (!t) return 0;
-  return Math.abs(pk.ltu.place - race.ltuPlace) <= t.tol ? t.pts : 0;
+  const t = ltuTiers(race).find(x => x.top === pk.ltu.top); if (!t) return 0;
+  return race.ltuPlace <= t.top ? t.pts : 0;
 }
 // marks: exact | adj | top | ""
 function score(race, pk) {
@@ -380,11 +379,10 @@ function raceBody(r, locked, done) {
       if (hasLTU(r)) {
         const myLtu = (pickOf(r, S.myName) || {}).ltu || {};
         const lts = sl.filter(a => a.nat === "LTU" || /lietuv|lithuan/i.test(a.name));
-        h += `<div class="ltu-box"><div class="ltu-title">🇱🇹 ${r.team ? "Kurią vietą užims Lietuva?" : "Kurią vietą užims geriausias lietuvis?"}</div>
+        h += `<div class="ltu-box"><div class="ltu-title">🇱🇹 ${r.team ? "Kur pateks Lietuvos komanda?" : "Kur pateks geriausias lietuvis?"}</div>
           <div class="ltu-who">${lts.map(a => esc((a.bib ? "#" + a.bib + " " : "") + a.name)).join(" · ")}</div>
-          <div class="ltu-row"><input type="number" name="ltuPlace" min="1" max="200" placeholder="Vieta" value="${esc(myLtu.place ?? "")}">
-          <select name="ltuTol">${LTU_TIERS.map(t => `<option value="${t.tol}"${myLtu.tol === t.tol ? " selected" : ""}>${t.label} – ${t.pts} t.</option>`).join("")}</select></div>
-          <div class="ltu-hint">Rizikuok: kuo tikslesnis spėjimas, tuo daugiau taškų. Nepataikius į intervalą – 0.</div></div>`;
+          <div class="ltu-opts">${ltuTiers(r).map(t => `<label class="ltu-opt"><input type="radio" name="ltuTop" value="${t.top}"${myLtu.top === t.top ? " checked" : ""}><span><b>Top ${t.top}</b><small>${t.pts} t.</small></span></label>`).join("")}</div>
+          <div class="ltu-hint">Kuo aukštesnę vietą spėji – tuo daugiau taškų, bet didesnė rizika. Taškai, jei ${r.team ? "komanda" : "geriausias lietuvis"} finišuos tame top'e.</div></div>`;
       }
       h += `<button class="btn">${saved.length ? "Atnaujinti spėjimą" : "Pateikti spėjimą"}</button>
         <div class="msg">Spėjimas užsirakina rungties starto metu. Kitų spėjimai matosi tik po starto.</div></form>`;
@@ -403,9 +401,9 @@ function raceBody(r, locked, done) {
     if (sc.some(x => x.pk && x.pk.ltu) || typeof r.ltuPlace === "number") {
       h += `<tr class="ltu-tr"><td>🇱🇹</td>` + sc.map(({ pk, s }) => {
         const l = pk && pk.ltu; if (!l) return `<td>–</td>`;
-        const t = LTU_TIERS.find(x => x.tol === l.tol);
+        const t = ltuTiers(r).find(x => x.top === l.top);
         const ok = done && s.ltu > 0;
-        return `<td class="${done ? (ok ? "hit-exact" : "") : ""}">${l.place} vt.${l.tol ? " ±" + l.tol : ""}${done ? ` (${fmtPts(s.ltu)})` : ` · ${t ? t.pts : "?"} t.`}</td>`;
+        return `<td class="${ok ? "hit-exact" : ""}">Top ${l.top}${done ? ` (${fmtPts(s.ltu)})` : ` · ${t ? t.pts : "?"} t.`}</td>`;
       }).join("") + (done ? `<td><b>${typeof r.ltuPlace === "number" ? r.ltuPlace + " vt." : "–"}</b></td>` : "") + `</tr>`;
     }
     if (done) h += `<tr><td></td>${sc.map(x => `<td class="pts">${fmtPts(x.s.pts)} t.</td>`).join("")}<td></td></tr>`;
@@ -524,9 +522,10 @@ function renderRules() {
       <li>Lentelėje lygių taškų atveju aukščiau tas, kas <b>laimėjo daugiau etapų</b> (daugiausiai taškų etape), po to – daugiau tikslių pataikymų.</li>
     </ul>
     <h3>🇱🇹 Geriausias lietuvis</h3>
-    <div class="note">Kiekvienoje rungtyje, kurioje startuoja lietuviai, spėji, kurią vietą užims geriausias lietuvis (estafetėse – Lietuvos komanda), ir pasirenki riziką:</div>
-    <table class="rules-t">${LTU_TIERS.map(t => `<tr><td>${t.label}</td><td class="pts">${t.pts}</td></tr>`).join("")}</table>
-    <div class="note">Pvz. spėjai 25 vietą „±5“: jei geriausias lietuvis baigė 20–30 vietoje – 2 t., kitaip 0. Jei nė vienas lietuvis nebaigė – 0. Čempionate taip pat ×${fmtPts(M)}.</div>
+    <div class="note">Kiekvienoje rungtyje, kurioje startuoja lietuviai, pasirenki, į kurį top'ą pateks geriausias lietuvis (estafetėse – Lietuvos komanda). Kuo aukščiau – tuo daugiau taškų:</div>
+    <table class="rules-t"><tr><th>Individualios</th><th class="pts">Taškai</th><th>Estafetės</th><th class="pts">Taškai</th></tr>
+      ${LTU_TIERS.individual.map((t, i) => { const tt = LTU_TIERS.team[i]; return `<tr><td>Top ${t.top}</td><td class="pts">${t.pts}</td><td>${tt ? "Top " + tt.top : ""}</td><td class="pts">${tt ? tt.pts : ""}</td></tr>`; }).join("")}</table>
+    <div class="note">Pvz. pasirinkai „Top 20“ (4 t.): jei geriausias lietuvis baigė 1–20 vietoje – 4 t., jei 21-as ar žemiau – 0. Jei nė vienas lietuvis nebaigė – 0. Čempionate ×${fmtPts(M)}.</div>
     <h3>❓ Etapo klausimas</h3>
     <div class="note">Kiekviename etape – vienas papildomas klausimas už +1 tašką. Atsakyti galima iki pirmos etapo rungties starto. Atsakymas paaiškėja po etapo.</div>
     <h3>Pavyzdys</h3>
@@ -626,11 +625,8 @@ async function savePicks(e) {
   const picks = [0,1,2,3,4,5].map(i => f.elements["p" + i].value.trim());
   const filled = picks.filter(Boolean);
   let ltu = null;
-  if (f.elements.ltuPlace && f.elements.ltuPlace.value) {
-    const place = parseInt(f.elements.ltuPlace.value, 10), tol = parseInt(f.elements.ltuTol.value, 10);
-    if (!(place >= 1 && place <= 200)) { msg.className = "msg err"; msg.textContent = "Lietuvio vieta turi būti 1–200."; return; }
-    ltu = { place, tol };
-  }
+  const ltuSel = f.querySelector('input[name="ltuTop"]:checked');
+  if (ltuSel) ltu = { top: parseInt(ltuSel.value, 10) };
   if (!filled.length && !ltu) { msg.className = "msg err"; msg.textContent = "Įrašyk bent vieną vardą."; return; }
   const allowed = new Set((race.startlist || []).map(a => a.name));
   if (filled.some(p => !allowed.has(p))) { msg.className = "msg err"; msg.textContent = "Rinktis galima tik iš startų sąrašo."; return; }
