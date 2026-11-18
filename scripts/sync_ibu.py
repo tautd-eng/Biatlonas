@@ -9,6 +9,7 @@ Paleidimas:  python scripts/sync_ibu.py            (atnaujina artimas / nebaigta
              python scripts/sync_ibu.py --calendar (dar ir suranda naujas sezono rungtis)
 """
 import json, re, sys, time, urllib.request, urllib.error
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -35,23 +36,38 @@ def parse_ts(s):
     return datetime.fromisoformat(s.replace("Z", "+00:00"))
 
 
-def fetch(race_id):
+STATS = {"ok": 0, "missing": 0, "error": 0}
+
+
+def log(*a):
+    print(*a, flush=True)
+
+
+def fetch(race_id, retries=2, timeout=15):
     req = urllib.request.Request(BASE + race_id, headers={"User-Agent": UA, "Accept-Language": "en"})
-    for attempt in range(3):
+    for attempt in range(retries):
         try:
-            with urllib.request.urlopen(req, timeout=30) as r:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
                 html = r.read().decode("utf-8", "replace")
             m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.S)
             if not m:
+                STATS["missing"] += 1
                 return None
             st = json.loads(m.group(1))["props"]["pageProps"].get("startlistInitialState") or {}
-            return st if st.get("Competition") else None
+            if st.get("Competition"):
+                STATS["ok"] += 1
+                return st
+            STATS["missing"] += 1
+            return None
         except urllib.error.HTTPError as e:
-            if e.code == 404:
+            if e.code in (404, 500):
+                STATS["missing"] += 1
                 return None
-            time.sleep(2 + attempt * 3)
-        except Exception:
-            time.sleep(2 + attempt * 3)
+            log(f"  HTTP {e.code} {race_id}")
+        except Exception as e:
+            log(f"  klaida {race_id}: {type(e).__name__}")
+        time.sleep(1.5)
+    STATS["error"] += 1
     return None
 
 
@@ -161,26 +177,27 @@ def main():
     by_ibu = {r["ibu"]: r for r in races if r.get("ibu")}
     changed = []
 
-    # 1) kalendorius – surandam trūkstamas rungtis
+    # 1) kalendorius – surandam trūkstamas rungtis (lygiagrečiai)
     if calendar:
-        for ev in EVENTS:
-            for d in DISCIPLINES:
-                rid = f"BT{SEASON}SWRL{ev}{d}"
-                if rid in by_ibu:
-                    continue
-                st = fetch(rid)
-                time.sleep(0.4)
-                if not st:
-                    continue
-                comp, evt = st["Competition"], st.get("SportEvt") or {}
-                r = {"id": f"{SEASON}-{ev.replace('_', '')}-{d}", "ibu": rid, "stage": stage_name(evt, ev),
-                     "name": lt_name(comp), "start": comp["StartTime"], "team": is_team_race(comp),
-                     "startlist": [], "favorites": [], "result": []}
-                if ev == "CH__":
-                    r["championship"] = True
-                races.append(r)
-                by_ibu[rid] = r
-                changed.append(f"nauja rungtis {r['stage']} – {r['name']}")
+        todo = [(ev, d, f"BT{SEASON}SWRL{ev}{d}") for ev in EVENTS for d in DISCIPLINES if f"BT{SEASON}SWRL{ev}{d}" not in by_ibu]
+        log(f"Kalendorius: tikrinama {len(todo)} galimų rungčių…")
+        with ThreadPoolExecutor(max_workers=8) as ex:
+            found = list(ex.map(lambda t: (t, fetch(t[2], retries=1, timeout=12)), todo))
+        for (ev, d, rid), st in found:
+            if not st:
+                continue
+            comp, evt = st["Competition"], st.get("SportEvt") or {}
+            r = {"id": f"{SEASON}-{ev.replace('_', '')}-{d}", "ibu": rid, "stage": stage_name(evt, ev),
+                 "name": lt_name(comp), "start": comp["StartTime"], "team": is_team_race(comp),
+                 "startlist": [], "favorites": [], "result": []}
+            if ev == "CH__":
+                r["championship"] = True
+            races.append(r)
+            by_ibu[rid] = r
+            changed.append(f"nauja rungtis {r['stage']} – {r['name']}")
+        log(f"Kalendorius baigtas: rasta {STATS['ok']}, nėra {STATS['missing']}, klaidų {STATS['error']}")
+        if STATS["ok"] == 0 and STATS["error"] > 10:
+            log("::error::biathlonworld.com nepasiekiamas iš GitHub serverių")
 
     # 2) atnaujinam artimas ir nebaigtas rungtis
     t = now()
@@ -192,8 +209,8 @@ def main():
         done = bool(r.get("result"))
         if done or start > t + timedelta(days=4) or start < t - timedelta(days=5):
             continue
+        log(f"Atnaujinama: {r['name']} ({rid})")
         st = fetch(rid)
-        time.sleep(0.4)
         if not st:
             continue
         comp = st["Competition"]
