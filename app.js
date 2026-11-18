@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=9";
+import { firebaseConfig } from "./firebase-config.js?v=10";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -221,6 +221,8 @@ function stageView(st, raceId) {
     </div>`;
 }
 
+function flash(el) { el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
+
 function wireForms(box) {
   box.querySelectorAll("form[data-race]").forEach(f => {
     f.onsubmit = savePicks;
@@ -231,14 +233,34 @@ function wireForms(box) {
         const a = (race.startlist || []).find(x => x.name === sel.value);
         if (box) box.textContent = a && a.members ? a.members.join(" · ") : "";
       });
+      // pažymėti jau pasirinktus kitose vietose (rodo, kad pasirinkus jie bus sukeisti)
       const chosen = [0,1,2,3,4,5].map(i => f.elements["p" + i].value);
       [0,1,2,3,4,5].forEach(i => {
         [...f.elements["p" + i].options].forEach(o => {
-          o.disabled = !!o.value && chosen.includes(o.value) && f.elements["p" + i].value !== o.value;
+          if (!o.dataset.base) o.dataset.base = o.textContent;
+          const j = o.value ? chosen.indexOf(o.value) : -1;
+          o.textContent = j >= 0 && j !== i ? `${o.dataset.base}  ⇄ ${j + 1} vieta` : o.dataset.base;
         });
+        f.elements["p" + i].dataset.prev = f.elements["p" + i].value;
       });
     };
-    f.addEventListener("change", sync); sync();
+    // pasirinkus jau kitoje vietoje esantį – sukeičiam vietomis
+    f.addEventListener("change", e => {
+      const sel = e.target; if (!sel.name || !sel.name.startsWith("p")) return;
+      const i = Number(sel.name.slice(1)), v = sel.value, prev = sel.dataset.prev || "";
+      if (v) for (let j = 0; j < 6; j++) {
+        if (j !== i && f.elements["p" + j].value === v) { f.elements["p" + j].value = prev; flash(f.elements["p" + j]); }
+      }
+      sync();
+    });
+    f.querySelectorAll(".mv").forEach(b => b.onclick = () => {
+      const i = Number(b.dataset.i), j = i + Number(b.dataset.d);
+      if (j < 0 || j > 5) return;
+      const a = f.elements["p" + i], c = f.elements["p" + j];
+      [a.value, c.value] = [c.value, a.value];
+      flash(c); sync();
+    });
+    sync();
   });
 }
 
@@ -258,9 +280,11 @@ function raceBody(r, locked, done) {
       h += `<form data-race="${esc(r.id)}"><div class="picks-form">`;
       const membersOf = n => { const a = sl.find(x => x.name === n); return a && a.members && a.members.length ? a.members.join(" · ") : ""; };
       for (let i = 0; i < 6; i++) {
-        h += `<label>${i + 1}</label><div><select name="p${i}"><option value="">— pasirink —</option>` +
+        h += `<label>${i + 1}</label><div><div class="pick-row"><select name="p${i}"><option value="">— pasirink —</option>` +
           sl.map(a => `<option value="${esc(a.name)}"${a.name === mine[i] ? " selected" : ""}>${esc(label(a))}</option>`).join("") +
-          `</select>${r.team ? `<div class="members">${esc(membersOf(mine[i]))}</div>` : ""}</div>`;
+          `</select><button type="button" class="mv" data-i="${i}" data-d="-1" title="Aukštyn"${i === 0 ? " disabled" : ""}>↑</button>` +
+          `<button type="button" class="mv" data-i="${i}" data-d="1" title="Žemyn"${i === 5 ? " disabled" : ""}>↓</button></div>` +
+          `${r.team ? `<div class="members">${esc(membersOf(mine[i]))}</div>` : ""}</div>`;
       }
       h += `</div>`;
       h += `<button class="btn">${saved.length ? "Atnaujinti spėjimą" : "Pateikti spėjimą"}</button>
