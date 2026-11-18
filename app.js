@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=5";
+import { firebaseConfig } from "./firebase-config.js?v=6";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -98,6 +98,15 @@ function renderRaces() {
   captureDrafts();
   const box = $("#tab-races");
   if (!S.races.length) { box.innerHTML = `<div class="card note">Rungčių dar nėra.</div>`; return; }
+  const routeId = (location.hash.match(/^#r-(.+)$/) || [])[1];
+  const routeRace = routeId && S.races.find(r => r.id === decodeURIComponent(routeId));
+  $("#nav").classList.toggle("hidden", !!routeRace);
+  if (routeRace) {
+    ["races", "table", "rules"].forEach(t => $("#tab-" + t).classList.toggle("hidden", t !== "races"));
+    box.innerHTML = detailView(routeRace);
+    wireForms(box);
+    return;
+  }
   const sorted = [...S.races].sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
   let html = "", stage = null;
   for (const r of sorted) {
@@ -105,9 +114,10 @@ function renderRaces() {
     html += raceCard(r);
   }
   box.innerHTML = html;
-  box.querySelectorAll(".race-head").forEach(h => h.onclick = () => {
-    const id = h.dataset.id; S.open.has(id) ? S.open.delete(id) : S.open.add(id); renderRaces();
-  });
+  wireForms(box);
+}
+
+function wireForms(box) {
   box.querySelectorAll("form[data-race]").forEach(f => {
     f.onsubmit = savePicks;
     const race = S.races.find(x => x.id === f.dataset.race);
@@ -137,15 +147,30 @@ function raceCard(r) {
     if (done && pk) return `<span class="chip ok">${esc(p)}: ${score(r, pk).pts} t.</span>`;
     return `<span class="chip ${pk && !pk.late ? "ok" : ""}">${esc(p)} ${pk && !pk.late ? "✓" : "–"}</span>`;
   }).join("");
+  const mine = pickOf(r, S.myName);
+  const cta = !locked ? (!(r.startlist || []).length ? "Startų sąrašas ↗" : mine ? "Keisti spėjimą ↗" : "Spėti ↗") : done ? "Rezultatai ↗" : "Visų spėjimai ↗";
   return `<div class="card">
-    <div class="race-head" data-id="${esc(r.id)}">
+    <div class="race-head">
       <div><div class="race-title">${esc(r.name)}</div>
       <div class="race-meta">${fmtTime(r.start)} (LT laiku)${r.startlist && r.startlist.length ? ` · ${r.startlist.length} startuoja` : ""}</div></div>
       ${badge}
     </div>
-    <div class="chips">${chips}</div>
-    ${S.open.has(r.id) ? `<div class="body">${raceBody(r, locked, done)}</div>` : ""}
+    <div class="card-foot"><div class="chips">${chips}</div>
+      <a class="btn open-btn${!locked && (r.startlist || []).length && !mine ? "" : " ghost"}" href="#r-${encodeURIComponent(r.id)}" target="_blank" rel="noopener">${cta}</a></div>
   </div>`;
+}
+
+function detailView(r) {
+  const locked = isLocked(r), done = hasResult(r);
+  const badge = done ? `<span class="badge b-done">Rezultatai</span>`
+    : locked ? `<span class="badge b-live">Užrakinta</span>` : `<span class="badge b-open">Atvira</span>`;
+  return `<a class="back" href="#">← Visos rungtys</a>
+    <div class="card">
+      <div class="race-head"><div><div class="race-meta">${esc(r.stage)}</div>
+        <div class="race-title big">${esc(r.name)}</div>
+        <div class="race-meta">${fmtTime(r.start)} (LT laiku)</div></div>${badge}</div>
+      <div class="body">${raceBody(r, locked, done)}</div>
+    </div>`;
 }
 
 function raceBody(r, locked, done) {
@@ -156,7 +181,7 @@ function raceBody(r, locked, done) {
     const saved = (pickOf(r, S.myName) || {}).picks || [];
     const mine = drafts[r.id] || saved;
     const sl = [...(r.startlist || [])].sort((a, b) => (Number(a.bib) || 999) - (Number(b.bib) || 999));
-    h += startlistBlock(r, true);
+    h += `<div class="detail-grid"><div class="col-form">`;
     if (!sl.length) {
       h += `<div class="note">⏳ Startų sąrašas dar nepaskelbtas. Spėti bus galima, kai IBU jį paskelbs (dažniausiai dieną prieš rungtį).</div>`;
     } else {
@@ -172,6 +197,7 @@ function raceBody(r, locked, done) {
       h += `<button class="btn">${saved.length ? "Atnaujinti spėjimą" : "Pateikti spėjimą"}</button>
         <div class="msg">Spėjimas užsirakina rungties starto metu. Kitų spėjimai matosi tik po starto.</div></form>`;
     }
+    h += `</div><div class="col-sl">${startlistBlock(r, true)}</div></div>`;
   } else {
     const sc = players().map(p => ({ pk: pickOf(r, p), s: score(r, pickOf(r, p)) }));
     h += `<table><tr><th>#</th>${players().map(p => `<th>${esc(p)}</th>`).join("")}${done ? "<th>Rezultatas</th>" : ""}</tr>`;
@@ -389,6 +415,7 @@ document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
   ["races", "table", "rules"].forEach(t => $("#tab-" + t).classList.toggle("hidden", t !== b.dataset.tab));
 });
 
+window.addEventListener("hashchange", () => { if (S.myName) { renderRaces(); window.scrollTo(0, 0); } });
 loadRaces();
 setInterval(loadRaces, 5 * 60 * 1000);
 let lockSig = "";
