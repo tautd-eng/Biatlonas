@@ -118,6 +118,21 @@ def build_result(st, comp):
     return [name(r) for r in rows[:6]]
 
 
+def ltu_place(st, comp):
+    """Geriausio lietuvio (estafetėje – Lietuvos komandos) vieta. None – nėra/nebaigė."""
+    if not st.get("IsResult"):
+        return None
+    team = is_team_race(comp)
+    best = None
+    for r in st.get("Results") or []:
+        if r.get("Nat") != "LTU" or bool(r.get("IsTeam")) != team or r.get("IRM"):
+            continue
+        rk = str(r.get("Rank") or r.get("ResultOrder") or "")
+        if rk.isdigit():
+            best = int(rk) if best is None else min(best, int(rk))
+    return best
+
+
 def lt_name(comp):
     disc, cat = comp.get("DisciplineId"), comp.get("catId")
     km = (comp.get("km") or "").replace(".", ",")
@@ -191,6 +206,8 @@ def main():
         res = build_result(st, comp)
         if res and res != r.get("result"):
             r["result"] = res
+            lp = ltu_place(st, comp)
+            r["ltuPlace"] = lp if lp is not None else "–"
             changed.append(f"{r['name']}: rezultatai")
         if not res:
             sl = build_startlist(st, comp)

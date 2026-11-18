@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=23";
+import { firebaseConfig } from "./firebase-config.js?v=24";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -17,7 +17,7 @@ const S = {
     individual: { exact: [6,5,4,3,3,3], adjacent: 2, inTop6: 1, podiumBonus: 2, top6Bonus: 2 },
     team: { exact: [4,3,3,2,2,2], adjacent: 1, inTop6: 0, podiumBonus: 1, top6Bonus: 1 },
     championshipMultiplier: 1.5 }, rulesNote: "" },
-  user: null, myName: null, claims: {}, picks: {}, open: new Set(), unsub: []
+  user: null, myName: null, claims: {}, picks: {}, bonus: {}, questions: [], open: new Set(), unsub: []
 };
 
 // ---------- helpers ----------
@@ -34,7 +34,7 @@ function pickOf(race, name) {
   const uid = S.claims[name]; if (!uid) return undefined;
   const p = S.picks[race.id + "__" + uid]; if (!p) return undefined;
   const ts = p.updatedAt && p.updatedAt.toMillis ? p.updatedAt.toMillis() : null;
-  return { picks: p.picks || [], late: ts != null && ts >= Date.parse(race.start) };
+  return { picks: p.picks || [], ltu: p.ltu || null, late: ts != null && ts >= Date.parse(race.start) };
 }
 // "Dale-Skjevdal" turi sutapti su "Johannes DALE-SKJEVDAL"
 function same(a, b) {
@@ -47,6 +47,19 @@ function same(a, b) {
 const isChamp = r => r.championship === true || /čempionat/i.test(r.stage || "");
 const raceMult = r => isChamp(r) ? (S.config.scoring.championshipMultiplier || 1) : 1;
 const fmtPts = x => (Math.round(x * 10) / 10).toString().replace(".", ",");
+// 🇱🇹 geriausio lietuvio vieta: kuo siauresnis intervalas – tuo daugiau taškų
+const LTU_TIERS = [
+  { tol: 0, pts: 6, label: "Tiksliai ta vieta" },
+  { tol: 2, pts: 4, label: "±2 vietos" },
+  { tol: 5, pts: 2, label: "±5 vietos" },
+  { tol: 10, pts: 1, label: "±10 vietų" },
+];
+const hasLTU = r => (r.startlist || []).some(a => a.nat === "LTU" || /lietuv|lithuan/i.test(a.name));
+function ltuPoints(race, pk) {
+  if (!pk || pk.late || !pk.ltu || typeof race.ltuPlace !== "number") return 0;
+  const t = LTU_TIERS.find(x => x.tol === pk.ltu.tol); if (!t) return 0;
+  return Math.abs(pk.ltu.place - race.ltuPlace) <= t.tol ? t.pts : 0;
+}
 // marks: exact | adj | top | ""
 function score(race, pk) {
   const sc = race.team ? S.config.scoring.team : S.config.scoring.individual;
@@ -63,8 +76,9 @@ function score(race, pk) {
   });
   if (res.length >= 3 && [0,1,2].every(i => marks[i] === "exact")) { pts += sc.podiumBonus; bonus.push(`podiumas +${sc.podiumBonus}`); }
   if (res.length >= 6 && marks.filter(Boolean).length === 6) { pts += sc.top6Bonus; bonus.push(`visas top-6 +${sc.top6Bonus}`); }
+  const ltu = ltuPoints(race, pk);
   const mult = raceMult(race);
-  return { pts: pts * mult, marks, bonus, mult };
+  return { pts: (pts + ltu) * mult, marks, bonus, mult, ltu: ltu * mult };
 }
 function showOnly(id) {
   ["auth", "claim"].forEach(x => $("#" + x).classList.toggle("hidden", x !== id));
@@ -84,6 +98,7 @@ async function loadRaces() {
   try {
     const [races, cfg] = await Promise.all([loadJson("data/races.json"), loadJson("data/config.json").catch(() => null)]);
     S.races = races.races || [];
+    S.questions = races.questions || [];
     if (cfg) S.config = { ...S.config, ...cfg };
     if (!S.open.size) {
       const next = [...S.races].filter(r => !isLocked(r)).sort((a, b) => Date.parse(a.start) - Date.parse(b.start))[0];
@@ -133,6 +148,7 @@ function renderRaces() {
   if (st) {
     ["races", "table", "rules"].forEach(t => $("#tab-" + t).classList.toggle("hidden", t !== "races"));
     box.innerHTML = stageView(st, route.race);
+    box.querySelectorAll(".q-opt").forEach(b => b.onclick = () => saveBonus(b));
     wireForms(box); tickCountdowns();
     return;
   }
@@ -173,13 +189,15 @@ function stageCard(st) {
   const mine = st.races.filter(r => pickOf(r, S.myName)).length;
   const toPick = st.races.filter(r => !isLocked(r) && (r.startlist || []).length && !pickOf(r, S.myName)).length;
   const badge = allDone ? `<span class="badge b-done">Baigtas</span>` : anyOpen ? `<span class="badge b-open">Vyksta / artėja</span>` : `<span class="badge b-live">Laukiam rezultatų</span>`;
-  const pts = players().map(p => `<span class="chip">${esc(p)}: ${fmtPts(st.races.reduce((s, r) => s + score(r, pickOf(r, p)).pts, 0))} t.</span>`).join("");
+  const pts = players().map(p => `<span class="chip">${esc(p)}: ${fmtPts(st.races.reduce((s, r) => s + score(r, pickOf(r, p)).pts, 0) + bonusPoints(questionFor(st), p))} t.</span>`).join("");
   return `<a class="card stage-card" href="#s-${st.key}">
     <div class="race-head"><div>
       <div class="race-title big">${esc(st.name)}</div>
       <div class="race-meta">${d(first.start)} – ${d(last.start)} · ${st.races.length} rungt. · tavo spėjimų ${mine}/${st.races.length}</div>
     </div>${badge}</div>
     <div class="mini-states">${st.races.map(r => { const m = myState(r); return `<span class="mini ${m.cls}" title="${esc(r.name)}">${esc(shortName(r.name))}<b>${esc(m.label)}</b></span>`; }).join("")}</div>
+    ${(() => { const q = questionFor(st); if (!q) return ""; const m = bonusOf(q, S.myName); const closed = Date.now() >= Date.parse(qCloses(q));
+      return `<div class="q-mini ${m ? "st-picked" : closed ? "st-locked" : "st-need"}">❓ Etapo klausimas: ${m ? "✓ atsakyta" : closed ? "užsidarė" : "✍️ neatsakyta"}</div>`; })()}
     <div class="chips" style="margin-top:10px">${pts}</div>
     ${(() => { const nx = st.races.find(r => !isLocked(r)); return nx ? `<div class="next-lock">⏰ Artimiausia rungtis (${esc(shortName(nx.name))}) užsirakins po ${cd(nx.start)}</div>` : ""; })()}
     ${toPick ? `<div class="to-pick">✍️ Dar nespėjai ${toPick} rungt.</div>` : ""}
@@ -199,6 +217,47 @@ function banner(r) {
   else text = pk && !pk.late ? `🏁 Rezultatai: surinkai ${fmtPts(score(r, pk).pts)} t.` : "🏁 Rezultatai paskelbti – tu nespėjai";
   const left = !isLocked(r) ? `<div class="banner-cd">⏰ Spėjimą pateikti liko: ${cd(r.start)}</div>` : "";
   return `<div class="banner ${m.cls}">${esc(text)}${left}</div>`;
+}
+
+// ❓ etapo papildomas klausimas (+1 t.)
+function qCloses(q) {
+  const rs = S.races.filter(r => r.stage === q.stage);
+  return rs.length ? new Date(Math.min(...rs.map(r => Date.parse(r.start)))).toISOString() : q.closes;
+}
+function questionFor(st) { return (S.questions || []).find(q => q.stage === st.name); }
+function bonusOf(q, name) { const uid = S.claims[name]; return uid ? S.bonus[q.id + "__" + uid] : undefined; }
+function bonusPoints(q, name) {
+  if (!q || q.answer == null) return 0;
+  const b = bonusOf(q, name); if (!b) return 0;
+  const ts = b.updatedAt && b.updatedAt.toMillis ? b.updatedAt.toMillis() : null;
+  if (ts != null && ts >= Date.parse(qCloses(q))) return 0;
+  return b.answer === q.answer ? (q.points || 1) : 0;
+}
+function questionCard(q) {
+  if (!q) return "";
+  const closed = Date.now() >= Date.parse(qCloses(q));
+  const mine = bonusOf(q, S.myName);
+  let h = `<div class="card qcard"><div class="q-head">❓ Etapo klausimas <span class="q-pts">+${q.points || 1} t.</span></div>
+    <div class="q-text">${esc(q.q)}</div>`;
+  if (!closed) {
+    h += `<div class="q-opts">${q.options.map(o => `<button type="button" class="q-opt${mine && mine.answer === o ? " on" : ""}" data-q="${esc(q.id)}" data-a="${esc(o)}">${esc(o)}</button>`).join("")}</div>
+      <div class="q-foot">${mine ? `✓ Tavo atsakymas: <b>${esc(mine.answer)}</b> (gali keisti)` : "✍️ Dar neatsakei"} · ⏰ ${cd(qCloses(q), "užsidaro po ")}</div>`;
+  } else {
+    h += `<div class="q-answers">${players().map(p => { const b = bonusOf(q, p); const ok = q.answer != null && b && b.answer === q.answer;
+      return `<div class="q-ans${ok ? " ok" : ""}"><b>${esc(p)}</b>: ${b ? esc(b.answer) : "–"}${ok ? " ✓ +" + (q.points || 1) : ""}</div>`; }).join("")}</div>
+      <div class="q-foot">${q.answer != null ? `Teisingas atsakymas: <b>${esc(q.answer)}</b>` : "🔒 Užrakinta – atsakymas paaiškės po etapo"}</div>`;
+  }
+  return h + `<div class="msg q-msg"></div></div>`;
+}
+async function saveBonus(btn) {
+  const q = S.questions.find(x => x.id === btn.dataset.q); if (!q) return;
+  const msg = btn.closest(".qcard").querySelector(".q-msg");
+  if (Date.now() >= Date.parse(qCloses(q))) { msg.textContent = "Klausimas jau užsidarė."; return; }
+  msg.className = "msg q-msg"; msg.textContent = "Saugoma…";
+  try {
+    await setDoc(doc(db, "bonus", q.id + "__" + S.user.uid), { uid: S.user.uid, name: S.myName, qid: q.id, answer: btn.dataset.a, updatedAt: serverTimestamp() });
+    msg.textContent = "✓ Išsaugota";
+  } catch (e) { msg.className = "msg err q-msg"; msg.textContent = "Nepavyko išsaugoti."; }
 }
 
 function stageView(st, raceId) {
@@ -222,6 +281,7 @@ function stageView(st, raceId) {
   }).join("");
   return `<a class="back" href="#">← Visi etapai</a>
     <div class="stage-title">${esc(st.name)}</div>
+    ${questionCard(questionFor(st))}
     <div class="rtabs">${tabs}</div>
     <div class="card">
       <div class="race-head"><div>
@@ -317,6 +377,15 @@ function raceBody(r, locked, done) {
           `${r.team ? `<div class="members">${esc(membersOf(mine[i]))}</div>` : ""}</div>`;
       }
       h += `</div>`;
+      if (hasLTU(r)) {
+        const myLtu = (pickOf(r, S.myName) || {}).ltu || {};
+        const lts = sl.filter(a => a.nat === "LTU" || /lietuv|lithuan/i.test(a.name));
+        h += `<div class="ltu-box"><div class="ltu-title">🇱🇹 ${r.team ? "Kurią vietą užims Lietuva?" : "Kurią vietą užims geriausias lietuvis?"}</div>
+          <div class="ltu-who">${lts.map(a => esc((a.bib ? "#" + a.bib + " " : "") + a.name)).join(" · ")}</div>
+          <div class="ltu-row"><input type="number" name="ltuPlace" min="1" max="200" placeholder="Vieta" value="${esc(myLtu.place ?? "")}">
+          <select name="ltuTol">${LTU_TIERS.map(t => `<option value="${t.tol}"${myLtu.tol === t.tol ? " selected" : ""}>${t.label} – ${t.pts} t.</option>`).join("")}</select></div>
+          <div class="ltu-hint">Rizikuok: kuo tikslesnis spėjimas, tuo daugiau taškų. Nepataikius į intervalą – 0.</div></div>`;
+      }
       h += `<button class="btn">${saved.length ? "Atnaujinti spėjimą" : "Pateikti spėjimą"}</button>
         <div class="msg">Spėjimas užsirakina rungties starto metu. Kitų spėjimai matosi tik po starto.</div></form>`;
     }
@@ -330,6 +399,14 @@ function raceBody(r, locked, done) {
         const cls = pk && pk.late ? "late" : s.marks[k] === "exact" ? "hit-exact" : s.marks[k] === "adj" ? "hit-adj" : s.marks[k] === "top" ? "hit-top" : "";
         return `<td class="${cls}">${esc(v) || "–"}</td>`;
       }).join("") + (done ? `<td><b>${esc(r.result[k] || "")}</b></td>` : "") + `</tr>`;
+    }
+    if (sc.some(x => x.pk && x.pk.ltu) || typeof r.ltuPlace === "number") {
+      h += `<tr class="ltu-tr"><td>🇱🇹</td>` + sc.map(({ pk, s }) => {
+        const l = pk && pk.ltu; if (!l) return `<td>–</td>`;
+        const t = LTU_TIERS.find(x => x.tol === l.tol);
+        const ok = done && s.ltu > 0;
+        return `<td class="${done ? (ok ? "hit-exact" : "") : ""}">${l.place} vt.${l.tol ? " ±" + l.tol : ""}${done ? ` (${fmtPts(s.ltu)})` : ` · ${t ? t.pts : "?"} t.`}</td>`;
+      }).join("") + (done ? `<td><b>${typeof r.ltuPlace === "number" ? r.ltuPlace + " vt." : "–"}</b></td>` : "") + `</tr>`;
     }
     if (done) h += `<tr><td></td>${sc.map(x => `<td class="pts">${fmtPts(x.s.pts)} t.</td>`).join("")}<td></td></tr>`;
     h += `</table>`;
@@ -375,6 +452,7 @@ function renderTable() {
       tot[i].exact += s.marks.filter(m => m === "exact").length;
       tot[i].adj += s.marks.filter(m => m === "adj").length;
       tot[i].top += s.marks.filter(m => m === "top").length;
+      if (s.ltu > 0) tot[i].ltuHits = (tot[i].ltuHits || 0) + 1;
       if (best > 0 && s.pts === best) tot[i].raceWins++;
     });
   }
@@ -382,7 +460,9 @@ function renderTable() {
   const allStages = stagesList();
   const stages = allStages.filter(st => st.races.some(hasResult));
   const stageRows = stages.map(st => {
-    const pts = ps.map(p => st.races.reduce((a, r) => a + score(r, pickOf(r, p)).pts, 0));
+    const q = questionFor(st);
+    const pts = ps.map(p => st.races.reduce((a, r) => a + score(r, pickOf(r, p)).pts, 0) + bonusPoints(q, p));
+    ps.forEach((p, i) => { const b = bonusPoints(q, p); tot[i].pts += b; if (b) tot[i].qHits = (tot[i].qHits || 0) + 1; });
     const complete = st.races.every(hasResult);
     const best = Math.max(...pts);
     const winners = complete && best > 0 ? ps.filter((p, i) => pts[i] === best) : [];
@@ -403,7 +483,7 @@ function renderTable() {
     }).join("")}<td class="mx-tot">${fmtPts(t.pts)}</td></tr>`; }).join("")}
   </table></div><div class="note" style="margin-top:6px">🏆 – etapo nugalėtojas · pasvirai – etapas dar vyksta · „–“ – dar nėra rezultatų</div></div>`;
   h += `<div class="card">${ranked.map((t, k) => `<div class="lb-row"><div class="lb-pos">${k + 1}</div>
-    <div class="lb-name">${esc(t.name)}<div class="lb-sub">🏆 etapų laimėta: <b>${t.stageWins}</b> · rungčių laimėta: ${t.raceWins} · ${t.races} rungt.<br>🎯 tikslūs: ${t.exact} · per vieną: ${t.adj} · top-6: ${t.top}</div></div>
+    <div class="lb-name">${esc(t.name)}<div class="lb-sub">🏆 etapų laimėta: <b>${t.stageWins}</b> · rungčių laimėta: ${t.raceWins} · ${t.races} rungt.<br>🎯 tikslūs: ${t.exact} · per vieną: ${t.adj} · top-6: ${t.top} · 🇱🇹 ${t.ltuHits || 0} · ❓ ${t.qHits || 0}</div></div>
     <div class="lb-pts">${fmtPts(t.pts)}</div></div>`).join("")}
     <div class="note" style="margin-top:6px">Lygių taškų atveju aukščiau – laimėjęs daugiau etapų, po to – daugiau tikslių pataikymų.</div></div>`;
   if (stageRows.length) {
@@ -443,6 +523,12 @@ function renderRules() {
       <li>Pasaulio čempionato rungtims taškai dauginami iš <b>${fmtPts(M)}</b>.</li>
       <li>Lentelėje lygių taškų atveju aukščiau tas, kas <b>laimėjo daugiau etapų</b> (daugiausiai taškų etape), po to – daugiau tikslių pataikymų.</li>
     </ul>
+    <h3>🇱🇹 Geriausias lietuvis</h3>
+    <div class="note">Kiekvienoje rungtyje, kurioje startuoja lietuviai, spėji, kurią vietą užims geriausias lietuvis (estafetėse – Lietuvos komanda), ir pasirenki riziką:</div>
+    <table class="rules-t">${LTU_TIERS.map(t => `<tr><td>${t.label}</td><td class="pts">${t.pts}</td></tr>`).join("")}</table>
+    <div class="note">Pvz. spėjai 25 vietą „±5“: jei geriausias lietuvis baigė 20–30 vietoje – 2 t., kitaip 0. Jei nė vienas lietuvis nebaigė – 0. Čempionate taip pat ×${fmtPts(M)}.</div>
+    <h3>❓ Etapo klausimas</h3>
+    <div class="note">Kiekviename etape – vienas papildomas klausimas už +1 tašką. Atsakyti galima iki pirmos etapo rungties starto. Atsakymas paaiškėja po etapo.</div>
     <h3>Pavyzdys</h3>
     <div class="note">Spėjai: 1. A, 2. B, 3. C, 4. D, 5. E, 6. F. Rezultatas: 1. B, 2. A, 3. C, 4. G, 5. F, 6. D.<br>
     A per vieną (${I.adjacent}) + B per vieną (${I.adjacent}) + C tiksliai 3-ia (${col(I,2)}) + D top-6 (${I.inTop6}) + E – (0) + F per vieną (${I.adjacent}) = <b>${I.adjacent*3 + col(I,2) + I.inTop6} t.</b></div>
@@ -539,14 +625,21 @@ async function savePicks(e) {
   if (isLocked(race)) { msg.textContent = "Rungtis jau prasidėjo – spėjimas užrakintas."; renderRaces(); return; }
   const picks = [0,1,2,3,4,5].map(i => f.elements["p" + i].value.trim());
   const filled = picks.filter(Boolean);
-  if (!filled.length) { msg.className = "msg err"; msg.textContent = "Įrašyk bent vieną vardą."; return; }
+  let ltu = null;
+  if (f.elements.ltuPlace && f.elements.ltuPlace.value) {
+    const place = parseInt(f.elements.ltuPlace.value, 10), tol = parseInt(f.elements.ltuTol.value, 10);
+    if (!(place >= 1 && place <= 200)) { msg.className = "msg err"; msg.textContent = "Lietuvio vieta turi būti 1–200."; return; }
+    ltu = { place, tol };
+  }
+  if (!filled.length && !ltu) { msg.className = "msg err"; msg.textContent = "Įrašyk bent vieną vardą."; return; }
   const allowed = new Set((race.startlist || []).map(a => a.name));
   if (filled.some(p => !allowed.has(p))) { msg.className = "msg err"; msg.textContent = "Rinktis galima tik iš startų sąrašo."; return; }
   if (new Set(filled.map(norm)).size !== filled.length) { msg.className = "msg err"; msg.textContent = "Tas pats vardas įrašytas kelis kartus."; return; }
   btn.disabled = true; msg.className = "msg"; msg.textContent = "Saugoma…";
   try {
     await setDoc(doc(db, "picks", raceId + "__" + S.user.uid),
-      { uid: S.user.uid, name: S.myName, raceId, picks, updatedAt: serverTimestamp() });
+      ltu ? { uid: S.user.uid, name: S.myName, raceId, picks, ltu, updatedAt: serverTimestamp() }
+          : { uid: S.user.uid, name: S.myName, raceId, picks, updatedAt: serverTimestamp() });
     delete drafts[raceId];
     msg.textContent = "✓ Išsaugota";
     btn.disabled = false;
@@ -562,6 +655,10 @@ function subscribe() {
     S.claims = {}; snap.forEach(d => S.claims[d.id] = d.data().uid);
     S.myName = Object.keys(S.claims).find(n => S.claims[n] === S.user.uid) || null;
     renderAll();
+  }, onErr));
+  S.unsub.push(onSnapshot(collection(db, "bonus"), snap => {
+    S.bonus = {}; snap.forEach(d => S.bonus[d.id] = d.data());
+    if (S.myName) { renderRaces(); renderTable(); }
   }, onErr));
   S.unsub.push(onSnapshot(collection(db, "picks"), snap => {
     S.picks = {}; snap.forEach(d => S.picks[d.id] = d.data());

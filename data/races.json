@@ -602,5 +602,48 @@
    "result": [],
    "note": "Bandomasis persekiojimas – atsilikimai sugalvoti."
   }
+ ],
+ "questions": [
+  {
+   "id": "q-TEST",
+   "stage": "🧪 TESTAS (bus ištrinta)",
+   "q": "Kiek baudų (nepataikymų) iš viso padarys vyrų sprinto (testas) nugalėtojas?",
+   "options": [
+    "0",
+    "1",
+    "2",
+    "3 ar daugiau"
+   ],
+   "closes": "2026-11-21T15:00:00Z",
+   "answer": null,
+   "points": 1
+  },
+  {
+   "id": "q-2627-CP01",
+   "stage": "1 etapas · Kontiolahti (FIN)",
+   "q": "Sezono atidarymas: kurios šalies sportininkai Kontiolahti etape (visose 6 rungtyse) iškovos daugiausiai podiumo vietų? Estafetėse podiumas skaičiuojamas kaip 1.",
+   "options": [
+    "Norvegija",
+    "Prancūzija",
+    "Švedija",
+    "Vokietija",
+    "Kita / lygiosios"
+   ],
+   "closes": "2026-11-26T15:10:00Z",
+   "answer": null,
+   "points": 1
+  },
+  {
+   "id": "q-2627-CP02",
+   "stage": "2 etapas · Hochfilzen (AUT)",
+   "q": "Medžioklė Hochfilzene: ar vyrų persekiojimą laimės sportininkas, startavęs NE pirmas (t. y. ne sprinto nugalėtojas)?",
+   "options": [
+    "Taip – lyderis bus pagautas",
+    "Ne – sprinto nugalėtojas išlaikys pergalę"
+   ],
+   "closes": "2026-12-04T10:25:00Z",
+   "answer": null,
+   "points": 1
+  }
  ]
 }

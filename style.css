@@ -268,3 +268,25 @@ html[data-theme="pink"] .banner{font-weight:600}
 .mx .mx-win{font-weight:700;color:var(--gold)}
 .mx .mx-live{font-style:italic;color:var(--muted)}
 .mx .mx-empty{color:var(--line)}
+
+/* 🇱🇹 geriausias lietuvis */
+.ltu-box{margin-top:14px;padding:12px;border-radius:10px;background:linear-gradient(135deg,rgba(253,185,19,.12),rgba(0,106,68,.10),rgba(193,39,45,.10));border:1px solid var(--line)}
+.ltu-title{font-weight:700;margin-bottom:4px}
+.ltu-who{font-size:12px;color:var(--muted);margin-bottom:8px}
+.ltu-row{display:grid;grid-template-columns:100px 1fr;gap:8px}
+.ltu-hint{font-size:12px;color:var(--muted);margin-top:6px}
+.ltu-tr td{background:color-mix(in srgb,#fdb913 8%,transparent)}
+/* ❓ etapo klausimas */
+.qcard{border-left:4px solid var(--gold)}
+.q-head{font-weight:800;display:flex;justify-content:space-between;align-items:center}
+.q-pts{font-size:12px;background:var(--gold);color:#fff;border-radius:999px;padding:2px 8px}
+.q-text{margin:6px 0 10px;font-size:15px}
+.q-opts{display:flex;flex-wrap:wrap;gap:8px}
+.q-opt{border:1px solid var(--line);background:var(--input);color:var(--ink);border-radius:999px;padding:7px 14px;font:600 14px Inter,sans-serif;cursor:pointer}
+.q-opt:hover{border-color:var(--accent)}
+.q-opt.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.q-foot{font-size:13px;color:var(--muted);margin-top:8px}
+.q-answers{display:flex;flex-wrap:wrap;gap:8px}
+.q-ans{font-size:13px;padding:4px 10px;border-radius:8px;background:var(--bg)}
+.q-ans.ok{background:var(--ok-soft);color:var(--ok)}
+.q-mini{margin-top:8px;font-size:12px;font-weight:700;color:var(--st);background:var(--st-bg);border-left:3px solid var(--st);padding:4px 8px;border-radius:6px;display:inline-block}

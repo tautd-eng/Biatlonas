@@ -36,12 +36,30 @@ service cloud.firestore {
       allow read: if signedIn();
       allow create, update: if signedIn()
         && exists(claimPath(request.auth.uid))
-        && request.resource.data.keys().hasOnly(['uid', 'name', 'raceId', 'picks', 'updatedAt'])
+        && request.resource.data.keys().hasOnly(['uid', 'name', 'raceId', 'picks', 'ltu', 'updatedAt'])
+        && (!('ltu' in request.resource.data) || (request.resource.data.ltu is map
+             && request.resource.data.ltu.keys().hasOnly(['place', 'tol'])
+             && request.resource.data.ltu.place is int && request.resource.data.ltu.tol in [0, 2, 5, 10]))
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.name == get(claimPath(request.auth.uid)).data.name
         && pickId == request.resource.data.raceId + '__' + request.auth.uid
         && request.resource.data.picks is list
         && request.resource.data.picks.size() <= 6
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+
+    // bonus/{klausimoId}__{uid}: etapo klausimo atsakymas – kiekvienas rašo tik savo.
+    match /bonus/{bonusId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn()
+        && exists(claimPath(request.auth.uid))
+        && request.resource.data.keys().hasOnly(['uid', 'name', 'qid', 'answer', 'updatedAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.name == get(claimPath(request.auth.uid)).data.name
+        && bonusId == request.resource.data.qid + '__' + request.auth.uid
+        && request.resource.data.answer is string
+        && request.resource.data.answer.size() <= 120
         && request.resource.data.updatedAt == request.time;
       allow delete: if false;
     }
