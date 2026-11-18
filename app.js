@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=8";
+import { firebaseConfig } from "./firebase-config.js?v=9";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -121,10 +121,28 @@ function renderRaces() {
   if (st) {
     ["races", "table", "rules"].forEach(t => $("#tab-" + t).classList.toggle("hidden", t !== "races"));
     box.innerHTML = stageView(st, route.race);
-    wireForms(box);
+    wireForms(box); tickCountdowns();
     return;
   }
   box.innerHTML = stages.map(stageCard).join("");
+  tickCountdowns();
+}
+
+function fmtLeft(ms) {
+  if (ms <= 0) return "užrakinta";
+  const m = Math.floor(ms / 60000), h = Math.floor(m / 60), d = Math.floor(h / 24);
+  if (d >= 1) return `${d} d. ${h % 24} val.`;
+  if (h >= 1) return `${h} val. ${m % 60} min.`;
+  const sec = Math.floor(ms / 1000) % 60;
+  return `${m}:${String(sec).padStart(2, "0")} min.`;
+}
+const cd = (iso, prefix = "") => `<span class="cd" data-t="${esc(iso)}" data-p="${esc(prefix)}">${esc(prefix + fmtLeft(Date.parse(iso) - Date.now()))}</span>`;
+function tickCountdowns() {
+  document.querySelectorAll(".cd").forEach(el => {
+    const left = Date.parse(el.dataset.t) - Date.now();
+    el.textContent = el.dataset.p + fmtLeft(left);
+    el.classList.toggle("urgent", left > 0 && left < 3 * 3600e3);
+  });
 }
 
 function myState(r) {
@@ -151,6 +169,7 @@ function stageCard(st) {
     </div>${badge}</div>
     <div class="mini-states">${st.races.map(r => { const m = myState(r); return `<span class="mini ${m.cls}" title="${esc(r.name)}">${esc(shortName(r.name))}<b>${esc(m.label)}</b></span>`; }).join("")}</div>
     <div class="chips" style="margin-top:10px">${pts}</div>
+    ${(() => { const nx = st.races.find(r => !isLocked(r)); return nx ? `<div class="next-lock">⏰ Artimiausia rungtis (${esc(shortName(nx.name))}) užsirakins po ${cd(nx.start)}</div>` : ""; })()}
     ${toPick ? `<div class="to-pick">✍️ Dar nespėjai ${toPick} rungt.</div>` : ""}
   </a>`;
 }
@@ -166,7 +185,8 @@ function banner(r) {
   else if (m.cls === "st-locked") text = "🔒 Rungtis prasidėjo – tu nespėjai";
   else if (m.cls === "st-picked") text = isLocked(r) ? "🔒 Tavo spėjimas užfiksuotas" : `✓ Tavo spėjimas pateiktas${when ? " (" + when + ")" : ""} – iki starto dar gali keisti`;
   else text = pk && !pk.late ? `🏁 Rezultatai: surinkai ${score(r, pk).pts} t.` : "🏁 Rezultatai paskelbti – tu nespėjai";
-  return `<div class="banner ${m.cls}">${esc(text)}</div>`;
+  const left = !isLocked(r) ? `<div class="banner-cd">⏰ Spėjimą pateikti liko: ${cd(r.start)}</div>` : "";
+  return `<div class="banner ${m.cls}">${esc(text)}${left}</div>`;
 }
 
 function stageView(st, raceId) {
@@ -178,7 +198,7 @@ function stageView(st, raceId) {
     return `<a class="rtab ${m.cls}${x === r ? " on" : ""}" href="#s-${st.key}~${encodeURIComponent(x.id)}">
       <span class="rtab-name">${esc(x.name)}</span>
       <span class="rtab-time">${t.toLocaleDateString("lt-LT", { weekday: "short", day: "numeric" })} ${t.toLocaleTimeString("lt-LT", { hour: "2-digit", minute: "2-digit" })}</span>
-      <span class="rtab-state">${esc(m.label)}</span></a>`;
+      <span class="rtab-state">${esc(m.label)}</span>${!isLocked(x) ? `<span class="rtab-cd">${cd(x.start, "⏰ ")}</span>` : ""}</a>`;
   }).join("");
   const locked = isLocked(r), done = hasResult(r);
   const badge = done ? `<span class="badge b-done">Rezultatai</span>`
@@ -471,4 +491,5 @@ let lockSig = "";
 setInterval(() => {
   const s = S.races.map(r => isLocked(r) ? 1 : 0).join("");
   if (s !== lockSig) { lockSig = s; if (S.myName) renderRaces(); }
-}, 30000);
+  tickCountdowns();
+}, 1000);
