@@ -2,7 +2,7 @@
   "players": ["Tautvydas", "Vitalija", "Vitalis"],
   "scoring": {
     "individual": { "exact": [6, 5, 4, 3, 3, 3], "adjacent": 2, "inTop6": 1, "podiumBonus": 2, "top6Bonus": 2 },
-    "team":       { "exact": [4, 3, 3, 2, 2, 2], "adjacent": 1, "inTop6": 0, "podiumBonus": 1, "top6Bonus": 2 },
+    "team":       { "exact": [4, 3, 3, 2, 2, 2], "adjacent": 1, "inTop6": 0, "podiumBonus": 1, "top6Bonus": 1 },
     "championshipMultiplier": 1.5
   },
   "rulesNote": ""
