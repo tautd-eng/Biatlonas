@@ -180,3 +180,34 @@ html[data-theme="dark"] .cd.urgent{color:#ff9354}
 .themes [data-t="dark"]{background:linear-gradient(135deg,#0b1220,#1d3557)}
 .themes [data-t="pink"]{background:linear-gradient(135deg,#e0458f,#fbb6d5)}
 .top-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+
+/* ===== Rožinis fantasy dizainas: drakonų raitelių šaudykla ===== */
+html[data-theme="pink"]{
+  --bg:#fff4f8; --card:#fffafc; --ink:#4a1236; --muted:#8a5a76; --line:#f0c6da;
+  --accent:#c2306f; --accent-soft:#fde0ee; --gold:#b8862b;
+  --hdr:url("data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 160"%3E%3Cg fill="%23fff" fill-opacity=".9"%3E%0A%3Cpath d="M150 92c-10-4-18-14-20-26 14 6 24 6 34 0-2 12-6 20-14 26z"/%3E%0A%3Cpath d="M140 70C116 40 82 22 30 18c26 12 40 24 46 36-14-6-30-6-44 0 22 4 36 12 44 24-12-2-24 0-34 6 30 2 58 0 98-14z"/%3E%0A%3Cpath d="M160 70c24-30 58-48 110-52-26 12-40 24-46 36 14-6 30-6 44 0-22 4-36 12-44 24 12-2 24 0 34 6-30 2-58 0-98-14z"/%3E%0A%3Cpath d="M150 92c4 18 2 34-10 46-10 10-26 14-44 10 14-2 26-8 32-18-10 4-22 4-30-2 14 0 26-6 34-18 6-8 10-14 18-18z"/%3E%0A%3Cpath d="M146 46c2-8 6-12 10-12 3 0 4 3 2 6l6-2c-1 5-4 8-8 9l-2 13h-8z"/%3E%0A%3C/g%3E%3Cg fill="%23fff"%3E%3Ccircle cx="20" cy="120" r="1.6"/%3E%3Ccircle cx="60" cy="140" r="1.2"/%3E%3Ccircle cx="250" cy="125" r="1.6"/%3E%3Ccircle cx="285" cy="95" r="1.1"/%3E%3Ccircle cx="215" cy="145" r="1.3"/%3E%3C/g%3E%3C/svg%3E") right 12px center / auto 120% no-repeat, radial-gradient(ellipse at 20% 0%,#ff9cc8 0%,transparent 60%), linear-gradient(135deg,#7a1f55 0%,#c2306f 45%,#ef7fb2 100%);
+  --page:radial-gradient(ellipse at top,#ffe6f1 0%,#f8cfe2 60%,#efbfd6 100%);
+  --nav:#fff2f8ee; --nav-line:#ecbcd3; --input:#fff6fa; --stage-ink:#8c2357;
+  --btn:linear-gradient(135deg,#d6448a,#9d2463); --shadow:rgba(157,36,99,.14);
+}
+html[data-theme="pink"] header{padding-top:22px;padding-bottom:18px;border-bottom:3px solid #b8862b}
+html[data-theme="pink"] header h1,
+html[data-theme="pink"] .race-title.big,
+html[data-theme="pink"] .stage-title,
+html[data-theme="pink"] .stage,
+html[data-theme="pink"] .auth-card h3,
+html[data-theme="pink"] .lb-pos,
+html[data-theme="pink"] .lb-pts{font-family:"Cinzel",serif;letter-spacing:.5px}
+html[data-theme="pink"] header h1{font-size:24px;text-shadow:0 2px 8px rgba(90,10,50,.45)}
+html[data-theme="pink"] header .sub::after{content:" · 🐉 Drakonų raitelių šaudykla";font-style:italic}
+html[data-theme="pink"] body{font-family:"Cormorant Garamond",Georgia,serif;font-size:17px}
+html[data-theme="pink"] .card{border:1px solid #e8b9cf;box-shadow:0 0 0 3px #fff inset,0 0 0 4px #f3d6a2 inset,0 6px 20px var(--shadow)}
+html[data-theme="pink"] .stage-title::after,
+html[data-theme="pink"] .stage::after{content:"";display:block;height:12px;width:120px;margin-top:4px;background:url("data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 12"%3E%3Cg stroke="%23c9628f" stroke-width="1.2" fill="none" opacity=".7"%3E%3Cpath d="M0 6h44M76 6h44"/%3E%3Cpath d="M52 2l8 8 8-8M56 10l4-4 4 4"/%3E%3Ccircle cx="48" cy="6" r="1.5" fill="%23c9628f"/%3E%3Ccircle cx="72" cy="6" r="1.5" fill="%23c9628f"/%3E%3C/g%3E%3C/svg%3E") left center/contain no-repeat}
+html[data-theme="pink"] .lb-row:first-child .lb-name::before{content:"👑 "}
+html[data-theme="pink"] .btn{font-family:"Cinzel",serif;letter-spacing:.6px;border:1px solid #f3d6a2}
+html[data-theme="pink"] .banner{font-family:"Cormorant Garamond",Georgia,serif;font-size:16px;font-weight:700}
+html[data-theme="pink"] input,html[data-theme="pink"] select{font-family:"Cormorant Garamond",Georgia,serif;font-size:16px}
+html[data-theme="pink"] nav button{font-family:"Cinzel",serif;font-size:13px}
+html[data-theme="pink"] .stage-card::before{content:"✦";float:right;color:#b8862b;margin-left:8px}
+.themes [data-t="pink"]{background:linear-gradient(135deg,#7a1f55,#ef7fb2)}
