@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=2";
+import { firebaseConfig } from "./firebase-config.js?v=3";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -108,7 +108,18 @@ function renderRaces() {
   box.querySelectorAll(".race-head").forEach(h => h.onclick = () => {
     const id = h.dataset.id; S.open.has(id) ? S.open.delete(id) : S.open.add(id); renderRaces();
   });
-  box.querySelectorAll("form[data-race]").forEach(f => f.onsubmit = savePicks);
+  box.querySelectorAll("form[data-race]").forEach(f => {
+    f.onsubmit = savePicks;
+    const sync = () => {
+      const chosen = [0,1,2,3,4,5].map(i => f.elements["p" + i].value);
+      [0,1,2,3,4,5].forEach(i => {
+        [...f.elements["p" + i].options].forEach(o => {
+          o.disabled = !!o.value && chosen.includes(o.value) && f.elements["p" + i].value !== o.value;
+        });
+      });
+    };
+    f.addEventListener("change", sync); sync();
+  });
 }
 
 function raceCard(r) {
@@ -138,13 +149,20 @@ function raceBody(r, locked, done) {
     if (r.favorites && r.favorites.length) h += `<div class="note" style="margin-bottom:10px">⭐ Favoritai: ${r.favorites.map(esc).join(", ")}</div>`;
     const saved = (pickOf(r, S.myName) || {}).picks || [];
     const mine = drafts[r.id] || saved;
-    const listId = "dl-" + r.id;
-    const opts = (r.startlist || []).map(a => `<option value="${esc(a.name)}">${esc((a.nat || "") + (a.bib ? " #" + a.bib : ""))}</option>`).join("");
-    h += `<form data-race="${esc(r.id)}"><datalist id="${listId}">${opts}</datalist><div class="picks-form">`;
-    for (let i = 0; i < 6; i++) h += `<label>${i + 1}</label><input name="p${i}" list="${listId}" value="${esc(mine[i] || "")}" placeholder="${r.team ? "Šalis" : "Sportininkas"}" autocomplete="off">`;
-    h += `</div><button class="btn">${saved.length ? "Atnaujinti spėjimą" : "Pateikti spėjimą"}</button>
-      <div class="msg">Spėjimas užsirakina rungties starto metu. Kitų spėjimai matosi tik po starto.</div></form>`;
-    if (!(r.startlist || []).length) h += `<div class="msg">Startų sąrašas dar neskelbtas – vardus galima rašyti laisvai.</div>`;
+    const sl = [...(r.startlist || [])].sort((a, b) => (Number(a.bib) || 999) - (Number(b.bib) || 999));
+    if (!sl.length) {
+      h += `<div class="note">⏳ Startų sąrašas dar nepaskelbtas. Spėti bus galima, kai IBU jį paskelbs (dažniausiai dieną prieš rungtį).</div>`;
+    } else {
+      const label = a => (a.bib ? "#" + a.bib + " " : "") + a.name + (a.nat && !r.team ? " (" + a.nat + ")" : "");
+      h += `<form data-race="${esc(r.id)}"><div class="picks-form">`;
+      for (let i = 0; i < 6; i++) {
+        h += `<label>${i + 1}</label><select name="p${i}"><option value="">— pasirink —</option>` +
+          sl.map(a => `<option value="${esc(a.name)}"${a.name === mine[i] ? " selected" : ""}>${esc(label(a))}</option>`).join("") +
+          `</select>`;
+      }
+      h += `</div><button class="btn">${saved.length ? "Atnaujinti spėjimą" : "Pateikti spėjimą"}</button>
+        <div class="msg">Spėjimas užsirakina rungties starto metu. Kitų spėjimai matosi tik po starto.</div></form>`;
+    }
   } else {
     const sc = players().map(p => ({ pk: pickOf(r, p), s: score(r, pickOf(r, p)) }));
     h += `<table><tr><th>#</th>${players().map(p => `<th>${esc(p)}</th>`).join("")}${done ? "<th>Rezultatas</th>" : ""}</tr>`;
@@ -301,6 +319,8 @@ async function savePicks(e) {
   const picks = [0,1,2,3,4,5].map(i => f.elements["p" + i].value.trim());
   const filled = picks.filter(Boolean);
   if (!filled.length) { msg.className = "msg err"; msg.textContent = "Įrašyk bent vieną vardą."; return; }
+  const allowed = new Set((race.startlist || []).map(a => a.name));
+  if (filled.some(p => !allowed.has(p))) { msg.className = "msg err"; msg.textContent = "Rinktis galima tik iš startų sąrašo."; return; }
   if (new Set(filled.map(norm)).size !== filled.length) { msg.className = "msg err"; msg.textContent = "Tas pats vardas įrašytas kelis kartus."; return; }
   btn.disabled = true; msg.className = "msg"; msg.textContent = "Saugoma…";
   try {

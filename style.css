@@ -39,7 +39,7 @@ main,#auth,#claim{max-width:760px;margin:0 auto;padding:12px}
 .body{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
 .picks-form{display:grid;grid-template-columns:28px 1fr;gap:6px 8px;align-items:center}
 .picks-form label{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:18px;color:var(--muted);text-align:center}
-input{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%}
 .btn{border:0;background:var(--accent);color:#fff;font:600 14px Inter,sans-serif;padding:10px 16px;border-radius:8px;cursor:pointer;margin-top:10px}
 .btn.big{width:100%;margin:0;font-size:16px;padding:12px}
 .btn:disabled{opacity:.5;cursor:default}
