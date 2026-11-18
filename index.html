@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="lt">
 <head>
+<script>try{var t=localStorage.getItem("biat_theme");if(t&&t!=="blue")document.documentElement.dataset.theme=t;}catch(e){}</script>
 <meta charset="utf-8">
-<meta name="color-scheme" content="light">
+<meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#2f7fe0">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Biatlono totalizatorius 2026/27</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=12">
+<link rel="stylesheet" href="style.css?v=13">
 </head>
 <body>
 <header>
@@ -18,7 +19,14 @@
       <h1>🎯 Biatlono totalizatorius</h1>
       <div class="sub">IBU pasaulio taurė 2026/27 · spėjamas top-6</div>
     </div>
-    <button id="logout" class="link hidden">Atsijungti</button>
+    <div class="top-right">
+      <div class="themes" title="Dizainas">
+        <button data-t="blue" aria-label="Mėlynas"></button>
+        <button data-t="dark" aria-label="Juodas"></button>
+        <button data-t="pink" aria-label="Rožinis"></button>
+      </div>
+      <button id="logout" class="link hidden">Atsijungti</button>
+    </div>
   </div>
   <div class="me" id="me"></div>
 </header>
@@ -62,6 +70,6 @@
   <section id="tab-rules" class="hidden"></section>
 </main>
 
-<script type="module" src="app.js?v=12"></script>
+<script type="module" src="app.js?v=13"></script>
 </body>
 </html>

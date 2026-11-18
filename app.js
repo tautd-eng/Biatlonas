@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=12";
+import { firebaseConfig } from "./firebase-config.js?v=13";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -501,6 +501,18 @@ onAuthStateChanged(auth, user => {
   showOnly("claim");
   subscribe();
 });
+
+// dizaino tema
+const THEME_COLORS = { blue: "#2f7fe0", dark: "#0b1220", pink: "#e0458f" };
+function applyTheme(t) {
+  if (!THEME_COLORS[t]) t = "blue";
+  if (t === "blue") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = t;
+  document.querySelectorAll(".themes button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
+  const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = THEME_COLORS[t];
+  try { localStorage.setItem("biat_theme", t); } catch (e) {}
+}
+document.querySelectorAll(".themes button").forEach(b => b.onclick = () => applyTheme(b.dataset.t));
+applyTheme(document.documentElement.dataset.theme || "blue");
 
 // tabs
 document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
