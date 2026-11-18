@@ -298,3 +298,4 @@ html[data-theme="pink"] .banner{font-weight:600}
 .ltu-opt small{color:var(--muted);font-size:12px}
 .ltu-opt input:checked + span{background:var(--accent);border-color:var(--accent);color:#fff}
 .ltu-opt input:checked + span small{color:#fff}
+.qcard{margin:10px 0;padding:12px;border-radius:10px;background:var(--bg);border:1px solid var(--line);border-left:4px solid var(--gold)}

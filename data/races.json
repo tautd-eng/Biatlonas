@@ -605,43 +605,181 @@
  ],
  "questions": [
   {
-   "id": "q-TEST",
-   "stage": "🧪 TESTAS (bus ištrinta)",
-   "q": "Kiek baudų (nepataikymų) iš viso padarys vyrų sprinto (testas) nugalėtojas?",
+   "id": "q-TEST-SP-M",
+   "raceId": "TEST-SP-M",
+   "q": "Kiek baudų iš viso padarys nugalėtojas?",
    "options": [
     "0",
     "1",
     "2",
     "3 ar daugiau"
    ],
-   "closes": "2026-11-21T15:00:00Z",
    "answer": null,
    "points": 1
   },
   {
-   "id": "q-2627-CP01",
-   "stage": "1 etapas · Kontiolahti (FIN)",
-   "q": "Sezono atidarymas: kurios šalies sportininkai Kontiolahti etape (visose 6 rungtyse) iškovos daugiausiai podiumo vietų? Estafetėse podiumas skaičiuojamas kaip 1.",
+   "id": "q-TEST-PU-M",
+   "raceId": "TEST-PU-M",
+   "q": "Ar persekiojimą laimės startavęs pirmas?",
    "options": [
-    "Norvegija",
+    "Taip",
+    "Ne"
+   ],
+   "answer": null,
+   "points": 1
+  },
+  {
+   "id": "q-TEST-RL-M",
+   "raceId": "TEST-RL-M",
+   "q": "Kiek papildomų šovinių iš viso sunaudos nugalėjusi komanda?",
+   "options": [
+    "0–3",
+    "4–7",
+    "8 ir daugiau"
+   ],
+   "answer": null,
+   "points": 1
+  },
+  {
+   "id": "q-2627-KON-IN-M",
+   "raceId": "2627-KON-IN-M",
+   "q": "Kiek baudos minučių (nepataikymų) turės nugalėtojas?",
+   "options": [
+    "0",
+    "1",
+    "2",
+    "3 ar daugiau"
+   ],
+   "answer": null,
+   "points": 1
+  },
+  {
+   "id": "q-2627-KON-IN-W",
+   "raceId": "2627-KON-IN-W",
+   "q": "Ar nugalėtojai bus mažiau nei 25 metai (gimusi 2002 m. ar vėliau)?",
+   "options": [
+    "Taip",
+    "Ne"
+   ],
+   "answer": null,
+   "points": 1
+  },
+  {
+   "id": "q-2627-KON-SMR",
+   "raceId": "2627-KON-SMR",
+   "q": "Ar nugalėjusi komanda nesuks nė vieno baudos rato?",
+   "options": [
+    "Taip – 0 baudos ratų",
+    "Ne"
+   ],
+   "answer": null,
+   "points": 1
+  },
+  {
+   "id": "q-2627-KON-MR",
+   "raceId": "2627-KON-MR",
+   "q": "Koks bus nugalėtojų atotrūkis nuo antros vietos?",
+   "options": [
+    "Mažiau nei 10 s",
+    "10–30 s",
+    "Daugiau nei 30 s"
+   ],
+   "answer": null,
+   "points": 1
+  },
+  {
+   "id": "q-2627-KON-SP-M",
+   "raceId": "2627-KON-SP-M",
+   "q": "Kiek sportininkų pataikys visus 10 taikinių?",
+   "options": [
+    "0–5",
+    "6–10",
+    "11–15",
+    "16 ir daugiau"
+   ],
+   "answer": null,
+   "points": 1
+  },
+  {
+   "id": "q-2627-KON-SP-W",
+   "raceId": "2627-KON-SP-W",
+   "q": "Ar bent viena lietuvė pateks į persekiojimą (top 60)?",
+   "options": [
+    "Taip",
+    "Ne"
+   ],
+   "answer": null,
+   "points": 1
+  },
+  {
+   "id": "q-2627-HOC-SP-W",
+   "raceId": "2627-HOC-SP-W",
+   "q": "Kurios šalies sportininkė laimės?",
+   "options": [
     "Prancūzija",
+    "Norvegija",
     "Švedija",
     "Vokietija",
-    "Kita / lygiosios"
+    "Kita"
    ],
-   "closes": "2026-11-26T15:10:00Z",
    "answer": null,
    "points": 1
   },
   {
-   "id": "q-2627-CP02",
-   "stage": "2 etapas · Hochfilzen (AUT)",
-   "q": "Medžioklė Hochfilzene: ar vyrų persekiojimą laimės sportininkas, startavęs NE pirmas (t. y. ne sprinto nugalėtojas)?",
+   "id": "q-2627-HOC-SP-M",
+   "raceId": "2627-HOC-SP-M",
+   "q": "Ar nugalėtojas šaus be klaidų (0 baudų)?",
    "options": [
-    "Taip – lyderis bus pagautas",
-    "Ne – sprinto nugalėtojas išlaikys pergalę"
+    "Taip",
+    "Ne"
    ],
-   "closes": "2026-12-04T10:25:00Z",
+   "answer": null,
+   "points": 1
+  },
+  {
+   "id": "q-2627-HOC-PU-W",
+   "raceId": "2627-HOC-PU-W",
+   "q": "Iš kelintos starto pozicijos startuos nugalėtoja?",
+   "options": [
+    "1",
+    "2–3",
+    "4–10",
+    "11 ir žemiau"
+   ],
+   "answer": null,
+   "points": 1
+  },
+  {
+   "id": "q-2627-HOC-PU-M",
+   "raceId": "2627-HOC-PU-M",
+   "q": "Ar lyderis bus pagautas (laimės ne startavęs pirmas)?",
+   "options": [
+    "Taip",
+    "Ne"
+   ],
+   "answer": null,
+   "points": 1
+  },
+  {
+   "id": "q-2627-HOC-RL-W",
+   "raceId": "2627-HOC-RL-W",
+   "q": "Kiek baudos ratų iš viso suks nugalėjusi komanda?",
+   "options": [
+    "0",
+    "1",
+    "2 ar daugiau"
+   ],
+   "answer": null,
+   "points": 1
+  },
+  {
+   "id": "q-2627-HOC-RL-M",
+   "raceId": "2627-HOC-RL-M",
+   "q": "Ar Norvegija bus podiume?",
+   "options": [
+    "Taip",
+    "Ne"
+   ],
    "answer": null,
    "points": 1
   }

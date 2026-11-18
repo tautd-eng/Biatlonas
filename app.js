@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=26";
+import { firebaseConfig } from "./firebase-config.js?v=27";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -192,15 +192,16 @@ function stageCard(st) {
   const mine = st.races.filter(r => pickOf(r, S.myName)).length;
   const toPick = st.races.filter(r => !isLocked(r) && (r.startlist || []).length && !pickOf(r, S.myName)).length;
   const badge = allDone ? `<span class="badge b-done">Baigtas</span>` : anyOpen ? `<span class="badge b-open">Vyksta / artėja</span>` : `<span class="badge b-live">Laukiam rezultatų</span>`;
-  const pts = players().map(p => `<span class="chip">${esc(p)}: ${fmtPts(st.races.reduce((s, r) => s + score(r, pickOf(r, p)).pts, 0) + bonusPoints(questionFor(st), p))} t.</span>`).join("");
+  const pts = players().map(p => `<span class="chip">${esc(p)}: ${fmtPts(st.races.reduce((s, r) => s + raceTotal(r, p), 0))} t.</span>`).join("");
   return `<a class="card stage-card" href="#s-${st.key}">
     <div class="race-head"><div>
       <div class="race-title big">${esc(st.name)}</div>
       <div class="race-meta">${d(first.start)} – ${d(last.start)} · ${st.races.length} rungt. · tavo spėjimų ${mine}/${st.races.length}</div>
     </div>${badge}</div>
     <div class="mini-states">${st.races.map(r => { const m = myState(r); return `<span class="mini ${m.cls}" title="${esc(r.name)}">${esc(shortName(r.name))}<b>${esc(m.label)}</b></span>`; }).join("")}</div>
-    ${(() => { const q = questionFor(st); if (!q) return ""; const m = bonusOf(q, S.myName); const closed = Date.now() >= Date.parse(qCloses(q));
-      return `<div class="q-mini ${m ? "st-picked" : closed ? "st-locked" : "st-need"}">❓ Etapo klausimas: ${m ? "✓ atsakyta" : closed ? "užsidarė" : "✍️ neatsakyta"}</div>`; })()}
+    ${(() => { const qs = st.races.map(questionFor).filter(Boolean); if (!qs.length) return "";
+      const ans = qs.filter(q => bonusOf(q, S.myName)).length, open = qs.filter(q => !bonusOf(q, S.myName) && Date.now() < Date.parse(qCloses(q))).length;
+      return `<div class="q-mini ${open ? "st-need" : "st-picked"}">❓ Papildomi klausimai: atsakyta ${ans}/${qs.length}${open ? ` · laukia ${open}` : ""}</div>`; })()}
     <div class="chips" style="margin-top:10px">${pts}</div>
     ${(() => { const nx = st.races.find(r => !isLocked(r)); return nx ? `<div class="next-lock">⏰ Artimiausia rungtis (${esc(shortName(nx.name))}) užsirakins po ${cd(nx.start)}</div>` : ""; })()}
     ${toPick ? `<div class="to-pick">✍️ Dar nespėjai ${toPick} rungt.</div>` : ""}
@@ -224,10 +225,12 @@ function banner(r) {
 
 // ❓ etapo papildomas klausimas (+1 t.)
 function qCloses(q) {
-  const rs = S.races.filter(r => r.stage === q.stage);
-  return rs.length ? new Date(Math.min(...rs.map(r => Date.parse(r.start)))).toISOString() : q.closes;
+  const r = S.races.find(x => x.id === q.raceId);
+  return r ? r.start : q.closes;
 }
-function questionFor(st) { return (S.questions || []).find(q => q.stage === st.name); }
+function questionFor(r) { return (S.questions || []).find(q => q.raceId === r.id); }
+// rungties taškai su papildomu klausimu
+const raceTotal = (r, p) => score(r, pickOf(r, p)).pts + bonusPoints(questionFor(r), p);
 function bonusOf(q, name) { const uid = S.claims[name]; return uid ? S.bonus[q.id + "__" + uid] : undefined; }
 function bonusPoints(q, name) {
   if (!q || q.answer == null) return 0;
@@ -240,7 +243,7 @@ function questionCard(q) {
   if (!q) return "";
   const closed = Date.now() >= Date.parse(qCloses(q));
   const mine = bonusOf(q, S.myName);
-  let h = `<div class="card qcard"><div class="q-head">❓ Etapo klausimas <span class="q-pts">+${q.points || 1} t.</span></div>
+  let h = `<div class="qcard"><div class="q-head">❓ Papildomas klausimas <span class="q-pts">+${q.points || 1} t.</span></div>
     <div class="q-text">${esc(q.q)}</div>`;
   if (!closed) {
     h += `<div class="q-opts">${q.options.map(o => `<button type="button" class="q-opt${mine && mine.answer === o ? " on" : ""}" data-q="${esc(q.id)}" data-a="${esc(o)}">${esc(o)}</button>`).join("")}</div>
@@ -248,7 +251,7 @@ function questionCard(q) {
   } else {
     h += `<div class="q-answers">${players().map(p => { const b = bonusOf(q, p); const ok = q.answer != null && b && b.answer === q.answer;
       return `<div class="q-ans${ok ? " ok" : ""}"><b>${esc(p)}</b>: ${b ? esc(b.answer) : "–"}${ok ? " ✓ +" + (q.points || 1) : ""}</div>`; }).join("")}</div>
-      <div class="q-foot">${q.answer != null ? `Teisingas atsakymas: <b>${esc(q.answer)}</b>` : "🔒 Užrakinta – atsakymas paaiškės po etapo"}</div>`;
+      <div class="q-foot">${q.answer != null ? `Teisingas atsakymas: <b>${esc(q.answer)}</b>` : "🔒 Užrakinta – atsakymas paaiškės po rungties"}</div>`;
   }
   return h + `<div class="msg q-msg"></div></div>`;
 }
@@ -272,25 +275,25 @@ function stageView(st, raceId) {
     return `<a class="rtab ${m.cls}${x === r ? " on" : ""}" href="#s-${st.key}~${encodeURIComponent(x.id)}">
       <span class="rtab-name">${esc(x.name)}</span>
       <span class="rtab-time">${t.toLocaleDateString("lt-LT", { weekday: "short", day: "numeric" })} ${t.toLocaleTimeString("lt-LT", { hour: "2-digit", minute: "2-digit" })}</span>
-      <span class="rtab-state">${esc(m.label)}</span>${!isLocked(x) ? `<span class="rtab-cd">${cd(x.start, "⏰ ")}</span>` : ""}</a>`;
+      <span class="rtab-state">${esc(m.label)}${(() => { const q = questionFor(x); return q && !isLocked(x) && !bonusOf(q, S.myName) ? " · ❓" : ""; })()}</span>${!isLocked(x) ? `<span class="rtab-cd">${cd(x.start, "⏰ ")}</span>` : ""}</a>`;
   }).join("");
   const locked = isLocked(r), done = hasResult(r);
   const badge = done ? `<span class="badge b-done">Rezultatai</span>`
     : locked ? `<span class="badge b-live">Užrakinta</span>` : `<span class="badge b-open">Atvira</span>`;
   const chips = players().map(p => {
     const pk = pickOf(r, p);
-    if (done && pk) return `<span class="chip ok">${esc(p)}: ${fmtPts(score(r, pk).pts)} t.</span>`;
+    if (done && pk) return `<span class="chip ok">${esc(p)}: ${fmtPts(raceTotal(r, p))} t.</span>`;
     return `<span class="chip ${pk && !pk.late ? "ok" : ""}">${esc(p)} ${pk && !pk.late ? "✓" : "–"}</span>`;
   }).join("");
   return `<a class="back" href="#">← Visi etapai</a>
     <div class="stage-title">${esc(st.name)}</div>
-    ${questionCard(questionFor(st))}
     <div class="rtabs">${tabs}</div>
     <div class="card">
       <div class="race-head"><div>
         <div class="race-title big">${esc(r.name)}</div>
         <div class="race-meta">${fmtTime(r.start)} (LT laiku)</div></div>${badge}</div>
       ${banner(r)}
+      ${questionCard(questionFor(r))}
       <div class="chips">${chips}</div>
       <div class="body">${raceBody(r, locked, done)}</div>
     </div>`;
@@ -447,7 +450,7 @@ function renderTable() {
   const doneRaces = S.races.filter(hasResult).sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
   for (const r of doneRaces) {
     const sc = ps.map(p => score(r, pickOf(r, p)));
-    const best = Math.max(...sc.map(s => s.pts));
+    const best = Math.max(...ps.map(p => raceTotal(r, p)));
     sc.forEach((s, i) => {
       const pk = pickOf(r, ps[i]); if (pk && !pk.late) tot[i].races++;
       tot[i].pts += s.pts;
@@ -455,16 +458,15 @@ function renderTable() {
       tot[i].adj += s.marks.filter(m => m === "adj").length;
       tot[i].top += s.marks.filter(m => m === "top").length;
       if (s.ltu > 0) tot[i].ltuHits = (tot[i].ltuHits || 0) + 1;
-      if (best > 0 && s.pts === best) tot[i].raceWins++;
+      const b = bonusPoints(questionFor(r), ps[i]); tot[i].pts += b; if (b) tot[i].qHits = (tot[i].qHits || 0) + 1;
+      if (best > 0 && raceTotal(r, ps[i]) === best) tot[i].raceWins++;
     });
   }
   // etapų statistika
   const allStages = stagesList();
   const stages = allStages.filter(st => st.races.some(hasResult));
   const stageRows = stages.map(st => {
-    const q = questionFor(st);
-    const pts = ps.map(p => st.races.reduce((a, r) => a + score(r, pickOf(r, p)).pts, 0) + bonusPoints(q, p));
-    ps.forEach((p, i) => { const b = bonusPoints(q, p); tot[i].pts += b; if (b) tot[i].qHits = (tot[i].qHits || 0) + 1; });
+    const pts = ps.map(p => st.races.reduce((a, r) => a + raceTotal(r, p), 0));
     const complete = st.races.every(hasResult);
     const best = Math.max(...pts);
     const winners = complete && best > 0 ? ps.filter((p, i) => pts[i] === best) : [];
@@ -491,7 +493,7 @@ function renderTable() {
   if (stageRows.length) {
     h += `<div class="card"><h3 style="margin:0 0 8px">Rungtys</h3><table><tr><th>Rungtis</th>${ps.map(p => `<th style="text-align:right">${esc(p)}</th>`).join("")}</tr>`;
     for (const r of [...doneRaces].reverse())
-      h += `<tr><td>${esc(r.name)}<div class="race-meta">${esc(r.stage)}${isChamp(r) ? " · ×" + fmtPts(raceMult(r)) : ""}</div></td>${ps.map(p => `<td class="pts">${fmtPts(score(r, pickOf(r, p)).pts)}</td>`).join("")}</tr>`;
+      h += `<tr><td>${esc(r.name)}<div class="race-meta">${esc(r.stage)}${isChamp(r) ? " · ×" + fmtPts(raceMult(r)) : ""}</div></td>${ps.map(p => `<td class="pts">${fmtPts(raceTotal(r, p))}</td>`).join("")}</tr>`;
     h += `</table></div>`;
   } else h += `<div class="note" style="padding:4px">Rezultatų dar nėra – lentelė pildysis po pirmų rungčių.</div>`;
   $("#tab-table").innerHTML = h;
@@ -530,8 +532,8 @@ function renderRules() {
     <table class="rules-t"><tr><th>Individualios</th><th class="pts">Taškai</th><th>Estafetės</th><th class="pts">Taškai</th></tr>
       ${LTU_TIERS.individual.map((t, i) => { const tt = LTU_TIERS.team[i]; return `<tr><td>${tierLabel(t)}</td><td class="pts">${t.pts}</td><td>${tt ? tierLabel(tt) : ""}</td><td class="pts">${tt ? tt.pts : ""}</td></tr>`; }).join("")}</table>
     <div class="note">Pvz. pasirinkai „Top 20“ (6 t.): jei geriausias lietuvis baigė 1–20 vietoje – 6 t., jei 21-as ar žemiau – 0. „Už top 60“ (estafetėse „Už top 20“) pataikai, jei geriausias lietuvis baigė žemiau arba nė vienas nebaigė. Čempionate ×${fmtPts(M)}.</div>
-    <h3>❓ Etapo klausimas</h3>
-    <div class="note">Kiekviename etape – vienas papildomas klausimas už +1 tašką. Atsakyti galima iki pirmos etapo rungties starto. Atsakymas paaiškėja po etapo.</div>
+    <h3>❓ Papildomas klausimas</h3>
+    <div class="note">Kiekvienoje rungtyje – vienas papildomas klausimas už +1 tašką. Atsakyti galima iki rungties starto. Atsakymas paaiškėja po rungties.</div>
     <h3>Pavyzdys</h3>
     <div class="note">Spėjai: 1. A, 2. B, 3. C, 4. D, 5. E, 6. F. Rezultatas: 1. B, 2. A, 3. C, 4. G, 5. F, 6. D.<br>
     A per vieną (${I.adjacent}) + B per vieną (${I.adjacent}) + C tiksliai 3-ia (${col(I,2)}) + D top-6 (${I.inTop6}) + E – (0) + F per vieną (${I.adjacent}) = <b>${I.adjacent*3 + col(I,2) + I.inTop6} t.</b></div>
