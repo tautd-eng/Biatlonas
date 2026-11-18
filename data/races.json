@@ -10,7 +10,8 @@
    "team": false,
    "startlist": [],
    "favorites": [],
-   "result": []
+   "result": [],
+   "ibu": "BT2627SWRLCP01SMIN"
   },
   {
    "id": "2627-KON-IN-W",
@@ -20,7 +21,8 @@
    "team": false,
    "startlist": [],
    "favorites": [],
-   "result": []
+   "result": [],
+   "ibu": "BT2627SWRLCP01SWIN"
   },
   {
    "id": "2627-KON-SMR",
@@ -30,7 +32,8 @@
    "team": true,
    "startlist": [],
    "favorites": [],
-   "result": []
+   "result": [],
+   "ibu": "BT2627SWRLCP01MXSR"
   },
   {
    "id": "2627-KON-MR",
@@ -40,7 +43,8 @@
    "team": true,
    "startlist": [],
    "favorites": [],
-   "result": []
+   "result": [],
+   "ibu": "BT2627SWRLCP01MXRL"
   },
   {
    "id": "2627-KON-SP-M",
@@ -50,7 +54,8 @@
    "team": false,
    "startlist": [],
    "favorites": [],
-   "result": []
+   "result": [],
+   "ibu": "BT2627SWRLCP01SMSP"
   },
   {
    "id": "2627-KON-SP-W",
@@ -60,7 +65,8 @@
    "team": false,
    "startlist": [],
    "favorites": [],
-   "result": []
+   "result": [],
+   "ibu": "BT2627SWRLCP01SWSP"
   },
   {
    "id": "2627-HOC-SP-W",
@@ -70,7 +76,8 @@
    "team": false,
    "startlist": [],
    "favorites": [],
-   "result": []
+   "result": [],
+   "ibu": "BT2627SWRLCP02SWSP"
   },
   {
    "id": "2627-HOC-SP-M",
@@ -80,7 +87,8 @@
    "team": false,
    "startlist": [],
    "favorites": [],
-   "result": []
+   "result": [],
+   "ibu": "BT2627SWRLCP02SMSP"
   },
   {
    "id": "2627-HOC-PU-W",
@@ -90,7 +98,8 @@
    "team": false,
    "startlist": [],
    "favorites": [],
-   "result": []
+   "result": [],
+   "ibu": "BT2627SWRLCP02SWPU"
   },
   {
    "id": "2627-HOC-PU-M",
@@ -100,7 +109,8 @@
    "team": false,
    "startlist": [],
    "favorites": [],
-   "result": []
+   "result": [],
+   "ibu": "BT2627SWRLCP02SMPU"
   },
   {
    "id": "2627-HOC-RL-W",
@@ -110,7 +120,8 @@
    "team": true,
    "startlist": [],
    "favorites": [],
-   "result": []
+   "result": [],
+   "ibu": "BT2627SWRLCP02SWRL"
   },
   {
    "id": "2627-HOC-RL-M",
@@ -120,7 +131,8 @@
    "team": true,
    "startlist": [],
    "favorites": [],
-   "result": []
+   "result": [],
+   "ibu": "BT2627SWRLCP02SMRL"
   },
   {
    "id": "TEST-SP-M",

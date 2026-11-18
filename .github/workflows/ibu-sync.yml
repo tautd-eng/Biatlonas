@@ -1,0 +1,43 @@
+name: IBU sinchronizacija
+
+on:
+  schedule:
+    - cron: "7,37 * * * *"   # kas 30 min – startų sąrašai, laikai, rezultatai
+    - cron: "17 3 * * *"     # kasdien – naujų sezono rungčių paieška
+  workflow_dispatch:
+    inputs:
+      calendar:
+        description: "Ieškoti naujų rungčių (kalendorius)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ibu-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Sinchronizuoti su biathlonworld.com
+        run: |
+          ARGS=""
+          if [ "${{ github.event.schedule }}" = "17 3 * * *" ] || [ "${{ inputs.calendar }}" = "true" ]; then ARGS="--calendar"; fi
+          python scripts/sync_ibu.py $ARGS | tee /tmp/changes.txt
+      - name: Išsaugoti pakeitimus
+        run: |
+          if git diff --quiet; then echo "Nėra pakeitimų"; exit 0; fi
+          git config user.name "ibu-sync-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/races.json
+          git commit -m "IBU: $(head -c 200 /tmp/changes.txt | tr '\n' ';')"
+          git pull --rebase --autostash
+          git push
