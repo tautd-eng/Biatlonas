@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=22";
+import { firebaseConfig } from "./firebase-config.js?v=23";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -379,7 +379,8 @@ function renderTable() {
     });
   }
   // etapų statistika
-  const stages = stagesList().filter(st => st.races.some(hasResult));
+  const allStages = stagesList();
+  const stages = allStages.filter(st => st.races.some(hasResult));
   const stageRows = stages.map(st => {
     const pts = ps.map(p => st.races.reduce((a, r) => a + score(r, pickOf(r, p)).pts, 0));
     const complete = st.races.every(hasResult);
@@ -389,15 +390,23 @@ function renderTable() {
     return { st, pts, complete, winners, done: st.races.filter(hasResult).length };
   });
   const ranked = [...tot].sort((a, b) => b.pts - a.pts || b.stageWins - a.stageWins || b.exact - a.exact);
-  let h = `<div class="card">${ranked.map((t, k) => `<div class="lb-row"><div class="lb-pos">${k + 1}</div>
+  // pagrindinė lentelė: žaidėjai × etapai
+  const short = n => (n.split("·").pop() || n).replace(/\s*\([A-Z]{3}\)\s*/, "").replace(/\s*\(bus ištrinta\)/i, "").trim();
+  const byKey = new Map(stageRows.map(x => [x.st.key, x]));
+  let h = `<div class="card"><h3 style="margin:0 0 8px">Taškai per etapus</h3><div class="mx-wrap"><table class="mx">
+    <tr><th class="mx-name">#</th><th class="mx-name">Žaidėjas</th>${allStages.map(st => `<th title="${esc(st.name)}">${esc(short(st.name))}${isChamp(st.races[0]) ? " ×1,5" : ""}</th>`).join("")}<th class="mx-tot">Viso</th></tr>
+    ${ranked.map((t, k) => { const i = ps.indexOf(t.name); return `<tr><td>${k + 1}</td><td class="mx-name"><b>${esc(t.name)}</b></td>${allStages.map(st => {
+      const x = byKey.get(st.key);
+      if (!x) return `<td class="mx-empty">–</td>`;
+      const win = x.winners.includes(t.name);
+      return `<td class="${win ? "mx-win" : ""}${x.complete ? "" : " mx-live"}">${win ? "🏆 " : ""}${fmtPts(x.pts[i])}</td>`;
+    }).join("")}<td class="mx-tot">${fmtPts(t.pts)}</td></tr>`; }).join("")}
+  </table></div><div class="note" style="margin-top:6px">🏆 – etapo nugalėtojas · pasvirai – etapas dar vyksta · „–“ – dar nėra rezultatų</div></div>`;
+  h += `<div class="card">${ranked.map((t, k) => `<div class="lb-row"><div class="lb-pos">${k + 1}</div>
     <div class="lb-name">${esc(t.name)}<div class="lb-sub">🏆 etapų laimėta: <b>${t.stageWins}</b> · rungčių laimėta: ${t.raceWins} · ${t.races} rungt.<br>🎯 tikslūs: ${t.exact} · per vieną: ${t.adj} · top-6: ${t.top}</div></div>
     <div class="lb-pts">${fmtPts(t.pts)}</div></div>`).join("")}
     <div class="note" style="margin-top:6px">Lygių taškų atveju aukščiau – laimėjęs daugiau etapų, po to – daugiau tikslių pataikymų.</div></div>`;
   if (stageRows.length) {
-    h += `<div class="card"><h3 style="margin:0 0 8px">Etapai</h3><table><tr><th>Etapas</th>${ps.map(p => `<th style="text-align:right">${esc(p)}</th>`).join("")}</tr>`;
-    for (const x of [...stageRows].reverse())
-      h += `<tr><td>${esc(x.st.name)}<div class="race-meta">${x.complete ? "baigtas" : `vyksta · ${x.done}/${x.st.races.length} rungt.`}</div></td>${ps.map((p, i) => `<td class="pts">${x.winners.includes(p) ? "🏆 " : ""}${fmtPts(x.pts[i])}</td>`).join("")}</tr>`;
-    h += `</table></div>`;
     h += `<div class="card"><h3 style="margin:0 0 8px">Rungtys</h3><table><tr><th>Rungtis</th>${ps.map(p => `<th style="text-align:right">${esc(p)}</th>`).join("")}</tr>`;
     for (const r of [...doneRaces].reverse())
       h += `<tr><td>${esc(r.name)}<div class="race-meta">${esc(r.stage)}${isChamp(r) ? " · ×" + fmtPts(raceMult(r)) : ""}</div></td>${ps.map(p => `<td class="pts">${fmtPts(score(r, pickOf(r, p)).pts)}</td>`).join("")}</tr>`;

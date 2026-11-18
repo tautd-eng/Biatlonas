@@ -256,3 +256,15 @@ html[data-theme="pink"] .banner{font-weight:600}
 .hit-adj{color:var(--accent);font-weight:600}
 .rules-t{margin:6px 0 10px}
 .rules-t td.pts{text-align:right}
+
+/* etapų matrica */
+.mx-wrap{overflow-x:auto;margin:0 -4px}
+.mx{border-collapse:collapse;min-width:100%;font-size:14px}
+.mx th,.mx td{padding:8px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+.mx th{font-size:12px}
+.mx .mx-name{text-align:left;position:sticky;left:0;background:var(--card)}
+.mx td:first-child,.mx th:first-child{text-align:left;color:var(--muted);width:20px}
+.mx .mx-tot{font-weight:800;font-size:16px;color:var(--accent);background:var(--accent-soft)}
+.mx .mx-win{font-weight:700;color:var(--gold)}
+.mx .mx-live{font-style:italic;color:var(--muted)}
+.mx .mx-empty{color:var(--line)}
