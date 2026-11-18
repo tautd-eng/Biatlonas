@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=27";
+import { firebaseConfig } from "./firebase-config.js?v=28";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -140,6 +140,41 @@ function parseRoute() {
   return m ? { stage: m[1], race: m[2] ? decodeURIComponent(m[2]) : null } : null;
 }
 
+// ⚠️ kas dar nespėta: grąžina sąrašą trūkumų atviroms rungtims
+function missingFor(r) {
+  if (!S.myName || isLocked(r)) return [];
+  const out = [];
+  const hasSL = (r.startlist || []).length > 0;
+  const pk = pickOf(r, S.myName);
+  if (hasSL) {
+    const n = pk ? pk.picks.filter(Boolean).length : 0;
+    if (n === 0) out.push("top-6");
+    else if (n < 6) out.push(`top-6 (${n}/6)`);
+    if (hasLTU(r) && !(pk && pk.ltu)) out.push("🇱🇹 lietuvis");
+  }
+  const q = questionFor(r);
+  if (q && !bonusOf(q, S.myName)) out.push("❓ klausimas");
+  return out;
+}
+function allMissing() {
+  return [...S.races].sort((a, b) => Date.parse(a.start) - Date.parse(b.start))
+    .map(r => ({ r, m: missingFor(r) })).filter(x => x.m.length);
+}
+function missingBanner() {
+  const all = allMissing();
+  const cnt = all.reduce((a, x) => a + x.m.length, 0);
+  const navBtn = document.querySelector('nav button[data-tab="races"]');
+  if (navBtn) navBtn.innerHTML = `Rungtys${cnt ? ` <span class="nav-badge">${cnt}</span>` : ""}`;
+  document.title = (cnt ? `(${cnt}) ` : "") + "Biatlono totalizatorius 2026/27";
+  if (!all.length) return `<div class="all-ok">✅ Visi atviri spėjimai pateikti</div>`;
+  const soon = all.slice(0, 6);
+  return `<div class="missing-banner"><div class="mb-head">⚠️ Trūksta tavo spėjimų: ${cnt}</div>
+    ${soon.map(({ r, m }) => `<a class="mb-row" href="#s-${stageKey(r.stage)}~${encodeURIComponent(r.id)}">
+      <span class="mb-name">${esc(r.name)}<small>${esc((r.stage.split("·").pop() || "").trim())} · ${cd(r.start, "liko ")}</small></span>
+      <span class="mb-what">${m.map(x => `<i>${esc(x)}</i>`).join("")}</span></a>`).join("")}
+    ${all.length > soon.length ? `<div class="mb-more">…ir dar ${all.length - soon.length} rungt.</div>` : ""}</div>`;
+}
+
 function renderRaces() {
   captureDrafts();
   const box = $("#tab-races");
@@ -151,11 +186,12 @@ function renderRaces() {
   if (st) {
     ["races", "table", "rules"].forEach(t => $("#tab-" + t).classList.toggle("hidden", t !== "races"));
     box.innerHTML = stageView(st, route.race);
+    missingBanner();
     box.querySelectorAll(".q-opt").forEach(b => b.onclick = () => saveBonus(b));
     wireForms(box); tickCountdowns();
     return;
   }
-  box.innerHTML = stages.map(stageCard).join("");
+  box.innerHTML = missingBanner() + stages.map(stageCard).join("");
   tickCountdowns();
 }
 
@@ -193,7 +229,8 @@ function stageCard(st) {
   const toPick = st.races.filter(r => !isLocked(r) && (r.startlist || []).length && !pickOf(r, S.myName)).length;
   const badge = allDone ? `<span class="badge b-done">Baigtas</span>` : anyOpen ? `<span class="badge b-open">Vyksta / artėja</span>` : `<span class="badge b-live">Laukiam rezultatų</span>`;
   const pts = players().map(p => `<span class="chip">${esc(p)}: ${fmtPts(st.races.reduce((s, r) => s + raceTotal(r, p), 0))} t.</span>`).join("");
-  return `<a class="card stage-card" href="#s-${st.key}">
+  const miss = st.races.reduce((a, r) => a + missingFor(r).length, 0);
+  return `<a class="card stage-card${miss ? " has-missing" : ""}" href="#s-${st.key}">${miss ? `<div class="miss-ribbon">⚠️ Trūksta ${miss}</div>` : ""}
     <div class="race-head"><div>
       <div class="race-title big">${esc(st.name)}</div>
       <div class="race-meta">${d(first.start)} – ${d(last.start)} · ${st.races.length} rungt. · tavo spėjimų ${mine}/${st.races.length}</div>
@@ -243,7 +280,7 @@ function questionCard(q) {
   if (!q) return "";
   const closed = Date.now() >= Date.parse(qCloses(q));
   const mine = bonusOf(q, S.myName);
-  let h = `<div class="qcard"><div class="q-head">❓ Papildomas klausimas <span class="q-pts">+${q.points || 1} t.</span></div>
+  let h = `<div class="qcard${!closed && !mine ? " q-missing" : ""}"><div class="q-head">❓ Papildomas klausimas <span class="q-pts">+${q.points || 1} t.</span></div>
     <div class="q-text">${esc(q.q)}</div>`;
   if (!closed) {
     h += `<div class="q-opts">${q.options.map(o => `<button type="button" class="q-opt${mine && mine.answer === o ? " on" : ""}" data-q="${esc(q.id)}" data-a="${esc(o)}">${esc(o)}</button>`).join("")}</div>
@@ -272,7 +309,7 @@ function stageView(st, raceId) {
   const tabs = st.races.map(x => {
     const m = myState(x);
     const t = new Date(x.start);
-    return `<a class="rtab ${m.cls}${x === r ? " on" : ""}" href="#s-${st.key}~${encodeURIComponent(x.id)}">
+    return `<a class="rtab ${m.cls}${x === r ? " on" : ""}${missingFor(x).length ? " rt-missing" : ""}" href="#s-${st.key}~${encodeURIComponent(x.id)}">
       <span class="rtab-name">${esc(x.name)}</span>
       <span class="rtab-time">${t.toLocaleDateString("lt-LT", { weekday: "short", day: "numeric" })} ${t.toLocaleTimeString("lt-LT", { hour: "2-digit", minute: "2-digit" })}</span>
       <span class="rtab-state">${esc(m.label)}${(() => { const q = questionFor(x); return q && !isLocked(x) && !bonusOf(q, S.myName) ? " · ❓" : ""; })()}</span>${!isLocked(x) ? `<span class="rtab-cd">${cd(x.start, "⏰ ")}</span>` : ""}</a>`;
@@ -293,6 +330,7 @@ function stageView(st, raceId) {
         <div class="race-title big">${esc(r.name)}</div>
         <div class="race-meta">${fmtTime(r.start)} (LT laiku)</div></div>${badge}</div>
       ${banner(r)}
+      ${(() => { const m = missingFor(r); return m.length ? `<div class="miss-line">⚠️ Dar trūksta: ${m.map(x => `<b>${esc(x)}</b>`).join(", ")}</div>` : ""; })()}
       ${questionCard(questionFor(r))}
       <div class="chips">${chips}</div>
       <div class="body">${raceBody(r, locked, done)}</div>
@@ -349,6 +387,11 @@ function wireForms(box) {
       free.value = name; flash(free); sync();
       msgEl.className = "msg"; msgEl.textContent = "Nepamiršk paspausti „Pateikti spėjimą“.";
     });
+    const markEmpty = () => {
+      [0,1,2,3,4,5].forEach(i => f.elements["p" + i].classList.toggle("sel-empty", !f.elements["p" + i].value));
+      const lb = f.querySelector(".ltu-box"); if (lb) lb.classList.toggle("ltu-missing", !f.querySelector('input[name="ltuTop"]:checked'));
+    };
+    f.addEventListener("change", markEmpty); markEmpty();
     f.querySelectorAll(".mv").forEach(b => b.onclick = () => {
       const i = Number(b.dataset.i), j = i + Number(b.dataset.d);
       if (j < 0 || j > 5) return;
