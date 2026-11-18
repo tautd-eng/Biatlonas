@@ -216,15 +216,15 @@ html[data-theme="pink"] .stage-card::before{content:"✦";float:right;color:#b88
 @media (min-width:1150px){
   html[data-theme="pink"] body::before,
   html[data-theme="pink"] body::after{
-    content:"";position:fixed;top:0;bottom:0;width:calc((100vw - 1040px) / 2);z-index:0;pointer-events:none;
-    background-repeat:no-repeat;background-size:auto 100%;
+    content:"";position:fixed;top:var(--side-top,0px);bottom:0;width:calc((100vw - 1040px) / 2);z-index:0;pointer-events:none;
+    background-repeat:no-repeat;background-size:cover;transition:top .15s;
   }
   html[data-theme="pink"] body::before{left:0;border-right:2px solid #b8862b;
-    background-image:linear-gradient(90deg,rgba(20,4,13,.15) 0%,rgba(20,4,13,0) 60%,rgba(42,10,29,.55) 100%),url("img/drakonu-raitele.jpg");
-    background-position:center,42% center}
+    background-image:linear-gradient(90deg,rgba(20,4,13,.15) 0%,rgba(20,4,13,0) 60%,rgba(42,10,29,.55) 100%),url("img/raitele-kaire.jpg");
+    background-position:center,center top}
   html[data-theme="pink"] body::after{right:0;border-left:2px solid #b8862b;
-    background-image:linear-gradient(270deg,rgba(20,4,13,.15) 0%,rgba(20,4,13,0) 60%,rgba(42,10,29,.55) 100%),url("img/drakonu-raitele.jpg");
-    background-position:center,92% center}
+    background-image:linear-gradient(270deg,rgba(20,4,13,.15) 0%,rgba(20,4,13,0) 60%,rgba(42,10,29,.55) 100%),url("img/drakonas-desine.jpg");
+    background-position:center,70% center}
   html[data-theme="pink"] header,html[data-theme="pink"] nav,html[data-theme="pink"] main{position:relative;z-index:1}
 }
 /* siauruose ekranuose – paveikslas antraštėje */

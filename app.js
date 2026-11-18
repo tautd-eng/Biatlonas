@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=19";
+import { firebaseConfig } from "./firebase-config.js?v=20";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -501,6 +501,16 @@ onAuthStateChanged(auth, user => {
   showOnly("claim");
   subscribe();
 });
+
+// šoniniai paveikslai prasideda po antrašte (kad nebūtų uždengti veidai)
+function sideTop() {
+  const h = document.querySelector("header"), n = document.querySelector("nav");
+  const bottom = Math.max(h.getBoundingClientRect().bottom, n && !n.classList.contains("hidden") ? n.getBoundingClientRect().bottom : 0, 0);
+  document.documentElement.style.setProperty("--side-top", Math.round(bottom) + "px");
+}
+window.addEventListener("scroll", sideTop, { passive: true });
+window.addEventListener("resize", sideTop);
+setInterval(sideTop, 1000);
 
 // dizaino tema
 const THEME_COLORS = { blue: "#2f7fe0", dark: "#0b1220", pink: "#e0458f" };
