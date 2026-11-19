@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=28";
+import { firebaseConfig } from "./firebase-config.js?v=29";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -156,8 +156,11 @@ function missingFor(r) {
   if (q && !bonusOf(q, S.myName)) out.push("❓ klausimas");
   return out;
 }
+const URGENT_MS = 24 * 3600e3;
+const isUrgent = r => !isLocked(r) && Date.parse(r.start) - Date.now() <= URGENT_MS;
+// viršutinei juostai – tik rungtys, kurias reikia spėti per artimiausias 24 val.
 function allMissing() {
-  return [...S.races].sort((a, b) => Date.parse(a.start) - Date.parse(b.start))
+  return [...S.races].filter(isUrgent).sort((a, b) => Date.parse(a.start) - Date.parse(b.start))
     .map(r => ({ r, m: missingFor(r) })).filter(x => x.m.length);
 }
 function missingBanner() {
@@ -166,9 +169,9 @@ function missingBanner() {
   const navBtn = document.querySelector('nav button[data-tab="races"]');
   if (navBtn) navBtn.innerHTML = `Rungtys${cnt ? ` <span class="nav-badge">${cnt}</span>` : ""}`;
   document.title = (cnt ? `(${cnt}) ` : "") + "Biatlono totalizatorius 2026/27";
-  if (!all.length) return `<div class="all-ok">✅ Visi atviri spėjimai pateikti</div>`;
+  if (!all.length) return S.races.some(isUrgent) ? `<div class="all-ok">✅ Visi artimiausių 24 val. spėjimai pateikti</div>` : "";
   const soon = all.slice(0, 6);
-  return `<div class="missing-banner"><div class="mb-head">⚠️ Trūksta tavo spėjimų: ${cnt}</div>
+  return `<div class="missing-banner"><div class="mb-head">❗ Per 24 val. reikia pateikti: ${cnt}</div>
     ${soon.map(({ r, m }) => `<a class="mb-row" href="#s-${stageKey(r.stage)}~${encodeURIComponent(r.id)}">
       <span class="mb-name">${esc(r.name)}<small>${esc((r.stage.split("·").pop() || "").trim())} · ${cd(r.start, "liko ")}</small></span>
       <span class="mb-what">${m.map(x => `<i>${esc(x)}</i>`).join("")}</span></a>`).join("")}
@@ -230,7 +233,8 @@ function stageCard(st) {
   const badge = allDone ? `<span class="badge b-done">Baigtas</span>` : anyOpen ? `<span class="badge b-open">Vyksta / artėja</span>` : `<span class="badge b-live">Laukiam rezultatų</span>`;
   const pts = players().map(p => `<span class="chip">${esc(p)}: ${fmtPts(st.races.reduce((s, r) => s + raceTotal(r, p), 0))} t.</span>`).join("");
   const miss = st.races.reduce((a, r) => a + missingFor(r).length, 0);
-  return `<a class="card stage-card${miss ? " has-missing" : ""}" href="#s-${st.key}">${miss ? `<div class="miss-ribbon">⚠️ Trūksta ${miss}</div>` : ""}
+  const urgent = st.races.some(r => isUrgent(r) && missingFor(r).length);
+  return `<a class="card stage-card${urgent ? " has-missing" : miss ? " has-missing-soft" : ""}" href="#s-${st.key}">${miss ? `<div class="miss-ribbon${urgent ? "" : " soft"}">${urgent ? "❗" : "✍️"} Trūksta ${miss}</div>` : ""}
     <div class="race-head"><div>
       <div class="race-title big">${esc(st.name)}</div>
       <div class="race-meta">${d(first.start)} – ${d(last.start)} · ${st.races.length} rungt. · tavo spėjimų ${mine}/${st.races.length}</div>
@@ -309,7 +313,7 @@ function stageView(st, raceId) {
   const tabs = st.races.map(x => {
     const m = myState(x);
     const t = new Date(x.start);
-    return `<a class="rtab ${m.cls}${x === r ? " on" : ""}${missingFor(x).length ? " rt-missing" : ""}" href="#s-${st.key}~${encodeURIComponent(x.id)}">
+    return `<a class="rtab ${m.cls}${x === r ? " on" : ""}${missingFor(x).length ? (isUrgent(x) ? " rt-missing" : " rt-missing-soft") : ""}" href="#s-${st.key}~${encodeURIComponent(x.id)}">
       <span class="rtab-name">${esc(x.name)}</span>
       <span class="rtab-time">${t.toLocaleDateString("lt-LT", { weekday: "short", day: "numeric" })} ${t.toLocaleTimeString("lt-LT", { hour: "2-digit", minute: "2-digit" })}</span>
       <span class="rtab-state">${esc(m.label)}${(() => { const q = questionFor(x); return q && !isLocked(x) && !bonusOf(q, S.myName) ? " · ❓" : ""; })()}</span>${!isLocked(x) ? `<span class="rtab-cd">${cd(x.start, "⏰ ")}</span>` : ""}</a>`;
