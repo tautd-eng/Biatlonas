@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=29";
+import { firebaseConfig } from "./firebase-config.js?v=30";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -100,8 +100,9 @@ async function loadJson(path) {
 async function loadRaces() {
   try {
     const [races, cfg] = await Promise.all([loadJson("data/races.json"), loadJson("data/config.json").catch(() => null)]);
-    S.races = races.races || [];
-    S.questions = races.questions || [];
+    // bandomosios (TEST-) rungtys niekur nerodomos
+    S.races = (races.races || []).filter(r => !String(r.id).startsWith("TEST-"));
+    S.questions = (races.questions || []).filter(q => !String(q.raceId || "").startsWith("TEST-"));
     if (cfg) S.config = { ...S.config, ...cfg };
     if (!S.open.size) {
       const next = [...S.races].filter(r => !isLocked(r)).sort((a, b) => Date.parse(a.start) - Date.parse(b.start))[0];
