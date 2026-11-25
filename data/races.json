@@ -1,6 +1,6 @@
 {
  "season": "2026/27",
- "updated": "2026-11-24T00:16:14Z",
+ "updated": "2026-11-25T12:46:02Z",
  "races": [
   {
    "id": "2627-KON-IN-M",
@@ -30,7 +30,170 @@
    "name": "Single mišri estafetė",
    "start": "2026-11-28T12:10:00Z",
    "team": true,
-   "startlist": [],
+   "startlist": [
+    {
+     "name": "Norway",
+     "nat": "NOR",
+     "bib": 1,
+     "members": []
+    },
+    {
+     "name": "Sweden",
+     "nat": "SWE",
+     "bib": 2,
+     "members": []
+    },
+    {
+     "name": "Finland",
+     "nat": "FIN",
+     "bib": 3,
+     "members": []
+    },
+    {
+     "name": "France",
+     "nat": "FRA",
+     "bib": 4,
+     "members": []
+    },
+    {
+     "name": "Switzerland",
+     "nat": "SUI",
+     "bib": 5,
+     "members": []
+    },
+    {
+     "name": "Poland",
+     "nat": "POL",
+     "bib": 6,
+     "members": []
+    },
+    {
+     "name": "Austria",
+     "nat": "AUT",
+     "bib": 7,
+     "members": []
+    },
+    {
+     "name": "Czechia",
+     "nat": "CZE",
+     "bib": 8,
+     "members": []
+    },
+    {
+     "name": "Ukraine",
+     "nat": "UKR",
+     "bib": 9,
+     "members": []
+    },
+    {
+     "name": "Germany",
+     "nat": "GER",
+     "bib": 10,
+     "members": []
+    },
+    {
+     "name": "Italy",
+     "nat": "ITA",
+     "bib": 11,
+     "members": []
+    },
+    {
+     "name": "Slovenia",
+     "nat": "SLO",
+     "bib": 12,
+     "members": []
+    },
+    {
+     "name": "Estonia",
+     "nat": "EST",
+     "bib": 13,
+     "members": []
+    },
+    {
+     "name": "Lithuania",
+     "nat": "LTU",
+     "bib": 14,
+     "members": []
+    },
+    {
+     "name": "United States",
+     "nat": "USA",
+     "bib": 15,
+     "members": []
+    },
+    {
+     "name": "Kazakhstan",
+     "nat": "KAZ",
+     "bib": 16,
+     "members": []
+    },
+    {
+     "name": "Latvia",
+     "nat": "LAT",
+     "bib": 17,
+     "members": []
+    },
+    {
+     "name": "Moldova",
+     "nat": "MDA",
+     "bib": 18,
+     "members": []
+    },
+    {
+     "name": "Slovakia",
+     "nat": "SVK",
+     "bib": 19,
+     "members": []
+    },
+    {
+     "name": "Bulgaria",
+     "nat": "BUL",
+     "bib": 20,
+     "members": []
+    },
+    {
+     "name": "Canada",
+     "nat": "CAN",
+     "bib": 21,
+     "members": []
+    },
+    {
+     "name": "Greenland",
+     "nat": "GRL",
+     "bib": 22,
+     "members": []
+    },
+    {
+     "name": "Belgium",
+     "nat": "BEL",
+     "bib": 23,
+     "members": []
+    },
+    {
+     "name": "Denmark",
+     "nat": "DEN",
+     "bib": 24,
+     "members": []
+    },
+    {
+     "name": "Croatia",
+     "nat": "CRO",
+     "bib": 25,
+     "members": []
+    },
+    {
+     "name": "Great Britain",
+     "nat": "GBR",
+     "bib": 26,
+     "members": []
+    },
+    {
+     "name": "Korea",
+     "nat": "KOR",
+     "bib": 27,
+     "members": []
+    }
+   ],
    "favorites": [],
    "result": [],
    "ibu": "BT2627SWRLCP01MXSR"
