@@ -38,6 +38,6 @@ jobs:
           git config user.name "ibu-sync-bot"
           git config user.email "actions@users.noreply.github.com"
           git add data/races.json
-          git commit -m "IBU: $(head -c 200 /tmp/changes.txt | tr '\n' ';')"
+          git commit -m "IBU: $(grep -v -e "^Atnaujinama" -e "^Kalendorius" -e "^  " /tmp/changes.txt | head -c 200 | tr '\n' ';')"
           git pull --rebase --autostash
           git push

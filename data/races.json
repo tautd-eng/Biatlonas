@@ -8,8 +8,563 @@
    "name": "Vyrų 20 km individuali",
    "start": "2026-11-26T15:15:00Z",
    "team": false,
-   "startlist": [],
-   "favorites": [],
+   "startlist": [
+    {
+     "name": "Jacques JEFFERIES",
+     "nat": "GBR",
+     "bib": 1
+    },
+    {
+     "name": "Jakov FAK",
+     "nat": "SLO",
+     "bib": 2
+    },
+    {
+     "name": "Asset DYUSSENOV",
+     "nat": "KAZ",
+     "bib": 3
+    },
+    {
+     "name": "Niklas HARTWEG",
+     "nat": "SUI",
+     "bib": 4
+    },
+    {
+     "name": "Blagoy TODEV",
+     "nat": "BUL",
+     "bib": 5
+    },
+    {
+     "name": "Martin MATKO",
+     "nat": "SVK",
+     "bib": 6
+    },
+    {
+     "name": "Emilien CLAUDE",
+     "nat": "FRA",
+     "bib": 7
+    },
+    {
+     "name": "Rene ZAHKNA",
+     "nat": "EST",
+     "bib": 8
+    },
+    {
+     "name": "Dominic UNTERWEGER",
+     "nat": "AUT",
+     "bib": 9
+    },
+    {
+     "name": "Philip LINDKVIST-FLOETTEN",
+     "nat": "SWE",
+     "bib": 10
+    },
+    {
+     "name": "George COLTEA",
+     "nat": "ROU",
+     "bib": 11
+    },
+    {
+     "name": "Nicola ROMANIN",
+     "nat": "ITA",
+     "bib": 12
+    },
+    {
+     "name": "Jonas MARECEK",
+     "nat": "CZE",
+     "bib": 13
+    },
+    {
+     "name": "Andrejs RASTORGUJEVS",
+     "nat": "LAT",
+     "bib": 14
+    },
+    {
+     "name": "Denys NASYKO",
+     "nat": "UKR",
+     "bib": 15
+    },
+    {
+     "name": "Philipp HORN",
+     "nat": "GER",
+     "bib": 16
+    },
+    {
+     "name": "Thierry LANGER",
+     "nat": "BEL",
+     "bib": 17
+    },
+    {
+     "name": "Michal KRCMAR",
+     "nat": "CZE",
+     "bib": 18
+    },
+    {
+     "name": "Maxime GERMAIN",
+     "nat": "USA",
+     "bib": 19
+    },
+    {
+     "name": "Fabien CLAUDE",
+     "nat": "FRA",
+     "bib": 20
+    },
+    {
+     "name": "Vytautas STROLIA",
+     "nat": "LTU",
+     "bib": 21
+    },
+    {
+     "name": "Vitalii MANDZYN",
+     "nat": "UKR",
+     "bib": 22
+    },
+    {
+     "name": "Olli HIIDENSALO",
+     "nat": "FIN",
+     "bib": 23
+    },
+    {
+     "name": "Justus STRELOW",
+     "nat": "GER",
+     "bib": 24
+    },
+    {
+     "name": "Pavel MAGAZEEV",
+     "nat": "MDA",
+     "bib": 25
+    },
+    {
+     "name": "Oscar LOMBARDOT",
+     "nat": "FRA",
+     "bib": 26
+    },
+    {
+     "name": "Jan GUNKA",
+     "nat": "POL",
+     "bib": 27
+    },
+    {
+     "name": "Joscha BURKHALTER",
+     "nat": "SUI",
+     "bib": 28
+    },
+    {
+     "name": "Elias SEIDL",
+     "nat": "GER",
+     "bib": 29
+    },
+    {
+     "name": "Viktor BRANDT",
+     "nat": "SWE",
+     "bib": 30
+    },
+    {
+     "name": "Rihards LOZBERS",
+     "nat": "LAT",
+     "bib": 31
+    },
+    {
+     "name": "Jesper NELIN",
+     "nat": "SWE",
+     "bib": 32
+    },
+    {
+     "name": "Konrad BADACZ",
+     "nat": "POL",
+     "bib": 33
+    },
+    {
+     "name": "Sebastian STALDER",
+     "nat": "SUI",
+     "bib": 34
+    },
+    {
+     "name": "Didier BIONAZ",
+     "nat": "ITA",
+     "bib": 35
+    },
+    {
+     "name": "Vitezslav HORNIG",
+     "nat": "CZE",
+     "bib": 36
+    },
+    {
+     "name": "Melker NORDGREN",
+     "nat": "SWE",
+     "bib": 37
+    },
+    {
+     "name": "Johan-Olav Smoerdal BOTN",
+     "nat": "NOR",
+     "bib": 38
+    },
+    {
+     "name": "Renars BIRKENTALS",
+     "nat": "LAT",
+     "bib": 39
+    },
+    {
+     "name": "Martin ULDAL",
+     "nat": "NOR",
+     "bib": 40
+    },
+    {
+     "name": "Mark-Markos KEHVA",
+     "nat": "EST",
+     "bib": 41
+    },
+    {
+     "name": "Eric PERROT",
+     "nat": "FRA",
+     "bib": 42
+    },
+    {
+     "name": "Jeremy FINELLO",
+     "nat": "SUI",
+     "bib": 43
+    },
+    {
+     "name": "Campbell WRIGHT",
+     "nat": "USA",
+     "bib": 44
+    },
+    {
+     "name": "Fabian KASKEL",
+     "nat": "GER",
+     "bib": 45
+    },
+    {
+     "name": "Sturla Holm LAEGREID",
+     "nat": "NOR",
+     "bib": 46
+    },
+    {
+     "name": "Kresimir CRNKOVIC",
+     "nat": "CRO",
+     "bib": 47
+    },
+    {
+     "name": "Philipp NAWRATH",
+     "nat": "GER",
+     "bib": 48
+    },
+    {
+     "name": "Tomas MIKYSKA",
+     "nat": "CZE",
+     "bib": 49
+    },
+    {
+     "name": "Quentin FILLON MAILLET",
+     "nat": "FRA",
+     "bib": 50
+    },
+    {
+     "name": "Dmytro PIDRUCHNYI",
+     "nat": "UKR",
+     "bib": 51
+    },
+    {
+     "name": "Vetle Sjaastad CHRISTIANSEN",
+     "nat": "NOR",
+     "bib": 52
+    },
+    {
+     "name": "Dmitrii SHAMAEV",
+     "nat": "ROU",
+     "bib": 53
+    },
+    {
+     "name": "Johannes DALE-SKJEVDAL",
+     "nat": "NOR",
+     "bib": 54
+    },
+    {
+     "name": "Elia ZENI",
+     "nat": "ITA",
+     "bib": 55
+    },
+    {
+     "name": "Tommaso GIACOMEL",
+     "nat": "ITA",
+     "bib": 56
+    },
+    {
+     "name": "Jakub BORGULA",
+     "nat": "SVK",
+     "bib": 57
+    },
+    {
+     "name": "Sebastian SAMUELSSON",
+     "nat": "SWE",
+     "bib": 58
+    },
+    {
+     "name": "Fredrik MUEHLBACHER",
+     "nat": "AUT",
+     "bib": 59
+    },
+    {
+     "name": "Isak Leknes FREY",
+     "nat": "NOR",
+     "bib": 60
+    },
+    {
+     "name": "Tuomas HARJULA",
+     "nat": "FIN",
+     "bib": 61
+    },
+    {
+     "name": "Lukas HOFER",
+     "nat": "ITA",
+     "bib": 62
+    },
+    {
+     "name": "Grzegorz GALICA",
+     "nat": "POL",
+     "bib": 63
+    },
+    {
+     "name": "Gaetan PATUREL",
+     "nat": "FRA",
+     "bib": 64
+    },
+    {
+     "name": "Vladimir ILIEV",
+     "nat": "BUL",
+     "bib": 65
+    },
+    {
+     "name": "Vincent BONACCI",
+     "nat": "USA",
+     "bib": 66
+    },
+    {
+     "name": "Thomas MARCHL",
+     "nat": "AUT",
+     "bib": 67
+    },
+    {
+     "name": "Florent CLAUDE",
+     "nat": "BEL",
+     "bib": 68
+    },
+    {
+     "name": "Miha DOVZAN",
+     "nat": "SLO",
+     "bib": 69
+    },
+    {
+     "name": "Arttu HEIKKINEN",
+     "nat": "FIN",
+     "bib": 70
+    },
+    {
+     "name": "Kristo SIIMER",
+     "nat": "EST",
+     "bib": 71
+    },
+    {
+     "name": "Lukas HASLINGER",
+     "nat": "AUT",
+     "bib": 72
+    },
+    {
+     "name": "Aleksandrs PATRIJUKS",
+     "nat": "LAT",
+     "bib": 73
+    },
+    {
+     "name": "Marcin ZAWOL",
+     "nat": "POL",
+     "bib": 74
+    },
+    {
+     "name": "Jimi KLEMETTINEN",
+     "nat": "FIN",
+     "bib": 75
+    },
+    {
+     "name": "Simon ADAMOV",
+     "nat": "SVK",
+     "bib": 76
+    },
+    {
+     "name": "Christoph PIRCHER",
+     "nat": "ITA",
+     "bib": 77
+    },
+    {
+     "name": "Vaclav CERVENKA",
+     "nat": "USA",
+     "bib": 78
+    },
+    {
+     "name": "Valentin LEJEUNE",
+     "nat": "FRA",
+     "bib": 79
+    },
+    {
+     "name": "Anton DUDCHENKO",
+     "nat": "UKR",
+     "bib": 80
+    },
+    {
+     "name": "Danilo RIETHMUELLER",
+     "nat": "GER",
+     "bib": 81
+    },
+    {
+     "name": "Mikulas KARLIK",
+     "nat": "CZE",
+     "bib": 82
+    },
+    {
+     "name": "Otto INVENIUS",
+     "nat": "FIN",
+     "bib": 83
+    },
+    {
+     "name": "Cornel PUCHIANU",
+     "nat": "ROU",
+     "bib": 84
+    },
+    {
+     "name": "Lovro PLANKO",
+     "nat": "SLO",
+     "bib": 85
+    },
+    {
+     "name": "Horia URS",
+     "nat": "ROU",
+     "bib": 86
+    },
+    {
+     "name": "Kirill BAUER",
+     "nat": "KAZ",
+     "bib": 87
+    },
+    {
+     "name": "Georgi DZHORGOV",
+     "nat": "BUL",
+     "bib": 88
+    },
+    {
+     "name": "Karl Rasmus TIISLAR",
+     "nat": "EST",
+     "bib": 89
+    },
+    {
+     "name": "Ruj GROSELJ SIMIC",
+     "nat": "SLO",
+     "bib": 90
+    },
+    {
+     "name": "Rasmus SCHIELLERUP",
+     "nat": "DEN",
+     "bib": 91
+    },
+    {
+     "name": "Will KOCH",
+     "nat": "USA",
+     "bib": 92
+    },
+    {
+     "name": "Graham BENSON",
+     "nat": "GBR",
+     "bib": 93
+    },
+    {
+     "name": "Timofei LAPSHIN",
+     "nat": "KOR",
+     "bib": 94
+    },
+    {
+     "name": "Jasper FLEMING",
+     "nat": "CAN",
+     "bib": 95
+    },
+    {
+     "name": "Sam PARMANTIER",
+     "nat": "BEL",
+     "bib": 96
+    },
+    {
+     "name": "Sondre SLETTEMARK",
+     "nat": "GRL",
+     "bib": 97
+    },
+    {
+     "name": "James PACAL",
+     "nat": "SUI",
+     "bib": 98
+    },
+    {
+     "name": "Kiyomasa OJIMA",
+     "nat": "JPN",
+     "bib": 99
+    },
+    {
+     "name": "Gavin JOHNSTON",
+     "nat": "CAN",
+     "bib": 100
+    },
+    {
+     "name": "Vasil ZASHEV",
+     "nat": "BUL",
+     "bib": 101
+    },
+    {
+     "name": "Nikita CIGAK",
+     "nat": "LTU",
+     "bib": 102
+    },
+    {
+     "name": "Masaharu YAMAMOTO",
+     "nat": "JPN",
+     "bib": 103
+    },
+    {
+     "name": "Matthew STRUM",
+     "nat": "CAN",
+     "bib": 104
+    },
+    {
+     "name": "Dujin CHOI",
+     "nat": "KOR",
+     "bib": 105
+    },
+    {
+     "name": "Alfred ERIKSSON",
+     "nat": "SWE",
+     "bib": 106
+    },
+    {
+     "name": "Maksim FOMIN",
+     "nat": "LTU",
+     "bib": 107
+    },
+    {
+     "name": "Aljaz OMEJC",
+     "nat": "SLO",
+     "bib": 108
+    },
+    {
+     "name": "Alexandr MUKHIN",
+     "nat": "KAZ",
+     "bib": 109
+    }
+   ],
+   "favorites": [
+    "Eric PERROT",
+    "Sturla Holm LAEGREID",
+    "Johan-Olav Smoerdal BOTN",
+    "Quentin FILLON MAILLET",
+    "Tommaso GIACOMEL",
+    "Sebastian SAMUELSSON",
+    "Vetle Sjaastad CHRISTIANSEN",
+    "Johannes DALE-SKJEVDAL"
+   ],
    "result": [],
    "ibu": "BT2627SWRLCP01SMIN"
   },
