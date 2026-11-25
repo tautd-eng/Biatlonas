@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=31";
+import { firebaseConfig } from "./firebase-config.js?v=32";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -115,7 +115,9 @@ async function loadRaces() {
 // ---------- render ----------
 const drafts = {};
 function captureDrafts() {
-  document.querySelectorAll("form[data-race]").forEach(f => {
+  // juodraštį saugom tik jei žmogus iš tikrųjų kažką keitė (kitaip perkrovus
+  // tušti laukai, nupiešti prieš atkeliaujant spėjimams, uždengtų išsaugotus)
+  document.querySelectorAll('form[data-race][data-dirty="1"]').forEach(f => {
     drafts[f.dataset.race] = [0,1,2,3,4,5].map(i => f.elements["p" + i].value);
   });
 }
@@ -394,6 +396,10 @@ function wireForms(box) {
   }));
   box.querySelectorAll("form[data-race]").forEach(f => {
     f.onsubmit = savePicks;
+    if (drafts[f.dataset.race]) f.dataset.dirty = "1";
+    const dirty = () => { f.dataset.dirty = "1"; };
+    f.addEventListener("change", dirty);
+    f.addEventListener("click", e => { if (e.target.closest(".mv,.combo-x")) dirty(); });
     const race = S.races.find(x => x.id === f.dataset.race);
     const sync = () => {
       if (race && race.team) [0,1,2,3,4,5].forEach(i => {
@@ -434,10 +440,10 @@ function wireForms(box) {
       const name = row.dataset.pick;
       const sels = [0,1,2,3,4,5].map(i => f.elements["p" + i]);
       const at = sels.findIndex(x => x.value === name);
-      if (at >= 0) { sels[at].value = ""; flash(sels[at]); sync(); return; }
+      if (at >= 0) { sels[at].value = ""; flash(sels[at]); f.dataset.dirty = "1"; sync(); return; }
       const free = sels.find(x => !x.value);
       if (!free) { msgEl.className = "msg err"; msgEl.textContent = "Visos 6 vietos užimtos – pirma išimk ką nors (paspausk ant jo sąraše)."; return; }
-      free.value = name; flash(free); sync();
+      free.value = name; flash(free); f.dataset.dirty = "1"; sync();
       msgEl.className = "msg"; msgEl.textContent = "Nepamiršk paspausti „Pateikti spėjimą“.";
     });
     const markEmpty = () => {
@@ -742,6 +748,7 @@ async function savePicks(e) {
       ltu ? { uid: S.user.uid, name: S.myName, raceId, picks, ltu, updatedAt: serverTimestamp() }
           : { uid: S.user.uid, name: S.myName, raceId, picks, updatedAt: serverTimestamp() });
     delete drafts[raceId];
+    f.dataset.dirty = "";
     msg.textContent = "✓ Išsaugota";
     btn.disabled = false;
   } catch (err) {
