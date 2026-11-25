@@ -1,6 +1,6 @@
 {
  "season": "2026/27",
- "updated": "2026-11-25T12:46:02Z",
+ "updated": "2026-11-25T14:10:59Z",
  "races": [
   {
    "id": "2627-KON-IN-M",
@@ -204,7 +204,146 @@
    "name": "Mišri estafetė",
    "start": "2026-11-28T14:15:00Z",
    "team": true,
-   "startlist": [],
+   "startlist": [
+    {
+     "name": "France",
+     "nat": "FRA",
+     "bib": 1,
+     "members": []
+    },
+    {
+     "name": "Italy",
+     "nat": "ITA",
+     "bib": 2,
+     "members": []
+    },
+    {
+     "name": "Sweden",
+     "nat": "SWE",
+     "bib": 3,
+     "members": []
+    },
+    {
+     "name": "United States",
+     "nat": "USA",
+     "bib": 4,
+     "members": []
+    },
+    {
+     "name": "Czechia",
+     "nat": "CZE",
+     "bib": 5,
+     "members": []
+    },
+    {
+     "name": "Norway",
+     "nat": "NOR",
+     "bib": 6,
+     "members": []
+    },
+    {
+     "name": "Switzerland",
+     "nat": "SUI",
+     "bib": 7,
+     "members": []
+    },
+    {
+     "name": "Germany",
+     "nat": "GER",
+     "bib": 8,
+     "members": []
+    },
+    {
+     "name": "Finland",
+     "nat": "FIN",
+     "bib": 9,
+     "members": []
+    },
+    {
+     "name": "Slovakia",
+     "nat": "SVK",
+     "bib": 10,
+     "members": []
+    },
+    {
+     "name": "Austria",
+     "nat": "AUT",
+     "bib": 11,
+     "members": []
+    },
+    {
+     "name": "Slovenia",
+     "nat": "SLO",
+     "bib": 12,
+     "members": []
+    },
+    {
+     "name": "Ukraine",
+     "nat": "UKR",
+     "bib": 13,
+     "members": []
+    },
+    {
+     "name": "Estonia",
+     "nat": "EST",
+     "bib": 14,
+     "members": []
+    },
+    {
+     "name": "Poland",
+     "nat": "POL",
+     "bib": 15,
+     "members": []
+    },
+    {
+     "name": "Canada",
+     "nat": "CAN",
+     "bib": 16,
+     "members": []
+    },
+    {
+     "name": "Latvia",
+     "nat": "LAT",
+     "bib": 17,
+     "members": []
+    },
+    {
+     "name": "Lithuania",
+     "nat": "LTU",
+     "bib": 18,
+     "members": []
+    },
+    {
+     "name": "Belgium",
+     "nat": "BEL",
+     "bib": 19,
+     "members": []
+    },
+    {
+     "name": "Kazakhstan",
+     "nat": "KAZ",
+     "bib": 20,
+     "members": []
+    },
+    {
+     "name": "Bulgaria",
+     "nat": "BUL",
+     "bib": 21,
+     "members": []
+    },
+    {
+     "name": "Great Britain",
+     "nat": "GBR",
+     "bib": 22,
+     "members": []
+    },
+    {
+     "name": "Korea",
+     "nat": "KOR",
+     "bib": 23,
+     "members": []
+    }
+   ],
    "favorites": [],
    "result": [],
    "ibu": "BT2627SWRLCP01MXRL"
