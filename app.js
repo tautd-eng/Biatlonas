@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=30";
+import { firebaseConfig } from "./firebase-config.js?v=31";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -342,9 +342,56 @@ function stageView(st, raceId) {
     </div>`;
 }
 
-function flash(el) { el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
+// 🔍 paieškos laukelis vietoje išskleidžiamo sąrašo (select lieka paslėptas – jo reikšmė naudojama logikai)
+const optLabel = o => (o && o.value) ? (o.dataset.base || o.textContent) : "";
+function syncCombo(sel) { if (sel._combo && document.activeElement !== sel._combo) sel._combo.value = optLabel(sel.selectedOptions[0]); }
+function makeCombo(sel, form) {
+  if (sel._combo) return;
+  const i = Number(sel.name.slice(1));
+  const wrap = document.createElement("div"); wrap.className = "combo";
+  const inp = document.createElement("input");
+  inp.type = "text"; inp.className = "combo-in"; inp.autocomplete = "off";
+  inp.placeholder = "🔍 Rašyk vardą, šalį ar nr.";
+  const clr = document.createElement("button"); clr.type = "button"; clr.className = "combo-x"; clr.textContent = "×"; clr.title = "Išvalyti";
+  const list = document.createElement("div"); list.className = "combo-list hidden";
+  wrap.append(inp, clr, list);
+  sel.style.display = "none"; sel.after(wrap); sel._combo = inp;
+  const opts = [...sel.options].filter(o => o.value);
+  let active = 0, shown = [];
+  const choose = v => { sel.value = v; sel.dispatchEvent(new Event("change", { bubbles: true })); inp.blur(); };
+  const render = () => {
+    const q = norm(inp.value);
+    const chosen = [0,1,2,3,4,5].map(k => form.elements["p" + k].value);
+    shown = opts.filter(o => !q || norm(optLabel(o)).includes(q) || norm(o.value).includes(q));
+    active = Math.min(active, Math.max(shown.length - 1, 0));
+    list.innerHTML = shown.length ? shown.slice(0, 80).map((o, k) => {
+      const j = chosen.indexOf(o.value);
+      return `<div class="combo-item${k === active ? " act" : ""}${j === i ? " cur" : ""}" data-v="${esc(o.value)}">${esc(optLabel(o))}${j >= 0 && j !== i ? `<small>⇄ ${j + 1} vieta</small>` : ""}${j === i ? `<small>✓</small>` : ""}</div>`;
+    }).join("") : `<div class="combo-empty">Nerasta</div>`;
+  };
+  inp.addEventListener("focus", () => { inp.value = ""; active = 0; render(); list.classList.remove("hidden"); });
+  inp.addEventListener("input", () => { active = 0; render(); });
+  inp.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown") { e.preventDefault(); active = Math.min(active + 1, shown.length - 1); render(); list.querySelector(".act")?.scrollIntoView({ block: "nearest" }); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); active = Math.max(active - 1, 0); render(); list.querySelector(".act")?.scrollIntoView({ block: "nearest" }); }
+    else if (e.key === "Enter") { e.preventDefault(); if (shown[active]) choose(shown[active].value); }
+    else if (e.key === "Escape") { inp.blur(); }
+  });
+  inp.addEventListener("blur", () => setTimeout(() => { list.classList.add("hidden"); syncCombo(sel); }, 150));
+  list.addEventListener("mousedown", e => { const it = e.target.closest(".combo-item"); if (!it) return; e.preventDefault(); choose(it.dataset.v); });
+  clr.onclick = () => { if (!sel.value) return; sel.value = ""; sel.dispatchEvent(new Event("change", { bubbles: true })); };
+  syncCombo(sel);
+}
+
+function flash(el) { const t = el._combo || el; t.classList.remove("flash"); void t.offsetWidth; t.classList.add("flash"); }
 
 function wireForms(box) {
+  box.querySelectorAll(".sl-search").forEach(inp => inp.addEventListener("input", () => {
+    const q = norm(inp.value);
+    inp.closest(".startlist").querySelectorAll(".sl-box > .sl-row, .sl-box > .sl-team").forEach(row => {
+      row.style.display = !q || norm(row.textContent).includes(q) ? "" : "none";
+    });
+  }));
   box.querySelectorAll("form[data-race]").forEach(f => {
     f.onsubmit = savePicks;
     const race = S.races.find(x => x.id === f.dataset.race);
@@ -364,6 +411,7 @@ function wireForms(box) {
         });
         f.elements["p" + i].dataset.prev = f.elements["p" + i].value;
       });
+      [0,1,2,3,4,5].forEach(k => syncCombo(f.elements["p" + k]));
       const lst = box.querySelector(`.startlist[data-race="${CSS.escape(f.dataset.race)}"]`);
       if (lst) lst.querySelectorAll(".sl-pick").forEach(row => {
         const j = chosen.indexOf(row.dataset.pick);
@@ -393,7 +441,7 @@ function wireForms(box) {
       msgEl.className = "msg"; msgEl.textContent = "Nepamiršk paspausti „Pateikti spėjimą“.";
     });
     const markEmpty = () => {
-      [0,1,2,3,4,5].forEach(i => f.elements["p" + i].classList.toggle("sel-empty", !f.elements["p" + i].value));
+      [0,1,2,3,4,5].forEach(i => { const el = f.elements["p" + i]; el.classList.toggle("sel-empty", !el.value); if (el._combo) el._combo.classList.toggle("sel-empty", !el.value); });
       const lb = f.querySelector(".ltu-box"); if (lb) lb.classList.toggle("ltu-missing", !f.querySelector('input[name="ltuTop"]:checked'));
     };
     f.addEventListener("change", markEmpty); markEmpty();
@@ -405,6 +453,8 @@ function wireForms(box) {
       flash(c); sync();
     });
     sync();
+    [0,1,2,3,4,5].forEach(k => makeCombo(f.elements["p" + k], f));
+    markEmpty();
   });
 }
 
@@ -489,7 +539,8 @@ function startlistBlock(r, open) {
   }).join("");
   const title = r.team ? `Komandos ir sudėtys (${sl.length})` : `Startų sąrašas (${sl.length})${pursuit ? " · atsilikimas starte" : ""}`;
   const hint = open && !isLocked(r) ? `<div class="sl-hint">👆 Paspausk ant sportininko – jis įkeliamas į pirmą laisvą vietą. Paspaudus dar kartą – išimamas.</div>` : "";
-  return `<details class="startlist" data-race="${esc(r.id)}"${open ? " open" : ""}><summary>${title}</summary>${hint}<div class="sl-box">${rows}</div></details>`;
+  const search = sl.length > 8 ? `<input type="search" class="sl-search" placeholder="🔍 Ieškoti sąraše (vardas, šalis, nr.)">` : "";
+  return `<details class="startlist" data-race="${esc(r.id)}"${open ? " open" : ""}><summary>${title}</summary>${hint}${search}<div class="sl-box">${rows}</div></details>`;
 }
 
 function renderTable() {
