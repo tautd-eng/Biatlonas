@@ -1,4 +1,4 @@
-import { firebaseConfig } from "./firebase-config.js?v=32";
+import { firebaseConfig } from "./firebase-config.js?v=33";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
@@ -155,6 +155,7 @@ function missingFor(r) {
     else if (n < 6) out.push(`top-6 (${n}/6)`);
     if (hasLTU(r) && !(pk && pk.ltu)) out.push("🇱🇹 lietuvis");
   }
+  if (pk && pk.picks.some(n => n && statusOf(r, n))) out.push("⛔ spėjime nestartuojantis");
   const q = questionFor(r);
   if (q && !bonusOf(q, S.myName)) out.push("❓ klausimas");
   return out;
@@ -476,7 +477,7 @@ function raceBody(r, locked, done) {
     if (!sl.length) {
       h += `<div class="note">⏳ Startų sąrašas dar nepaskelbtas. Spėti bus galima, kai IBU jį paskelbs (dažniausiai dieną prieš rungtį).</div>`;
     } else {
-      const label = a => (a.bib ? "#" + a.bib + " " : "") + a.name + (a.nat && !r.team ? " (" + a.nat + ")" : "") + (a.behind ? " " + a.behind : "");
+      const label = a => (a.bib ? "#" + a.bib + " " : "") + a.name + (a.nat && !r.team ? " (" + a.nat + ")" : "") + (a.behind ? " " + a.behind : "") + (a.status ? " ⛔ " + (IRM_LT[a.status] || a.status) : "");
       h += `<form data-race="${esc(r.id)}"><div class="picks-form">`;
       const membersOf = n => { const a = sl.find(x => x.name === n); return a && a.members && a.members.length ? a.members.join(" · ") : ""; };
       for (let i = 0; i < 6; i++) {
@@ -506,7 +507,7 @@ function raceBody(r, locked, done) {
       h += `<tr><td>${k + 1}</td>` + sc.map(({ pk, s }) => {
         const v = pk ? pk.picks[k] || "" : "";
         const cls = pk && pk.late ? "late" : s.marks[k] === "exact" ? "hit-exact" : s.marks[k] === "adj" ? "hit-adj" : s.marks[k] === "top" ? "hit-top" : "";
-        return `<td class="${cls}">${esc(v) || "–"}</td>`;
+        return `<td class="${cls}">${esc(v) || "–"}${v ? irmBadge(statusOf(r, v)) : ""}</td>`;
       }).join("") + (done ? `<td><b>${esc(r.result[k] || "")}</b></td>` : "") + `</tr>`;
     }
     if (sc.some(x => x.pk && x.pk.ltu) || typeof r.ltuPlace === "number") {
@@ -530,6 +531,10 @@ function raceBody(r, locked, done) {
   return h;
 }
 
+const IRM_LT = { DNS: "nestartavo", DNF: "nebaigė", LAP: "aplenktas", DSQ: "diskvalifikuotas" };
+const irmBadge = st => st ? `<span class="sl-irm" title="${esc(IRM_LT[st] || st)}">${esc(st)}</span>` : "";
+const statusOf = (r, name) => ((r.startlist || []).find(a => a.name === name) || {}).status;
+
 function startlistBlock(r, open) {
   const sl = [...(r.startlist || [])].sort((a, b) => (Number(a.bib) || 999) - (Number(b.bib) || 999));
   if (!sl.length) return "";
@@ -541,7 +546,7 @@ function startlistBlock(r, open) {
         : `<div class="sl-sub">sudėtis dar neskelbta</div>`;
       return `<div class="sl-team sl-pick" data-pick="${esc(a.name)}"><div class="sl-row"><span class="sl-place"></span><span class="sl-bib">${esc(a.bib ?? "")}</span><span class="sl-name">${esc(a.name)}</span><span class="sl-nat">${esc(a.nat || "")}</span></div>${mem}</div>`;
     }
-    return `<div class="sl-row sl-pick" data-pick="${esc(a.name)}"><span class="sl-place"></span><span class="sl-bib">${esc(a.bib ?? "")}</span><span class="sl-name">${esc(a.name)}</span><span class="sl-nat">${esc(a.nat || "")}</span>${pursuit ? `<span class="sl-behind">${esc(a.behind || "")}</span>` : ""}</div>`;
+    return `<div class="sl-row sl-pick${a.status ? " sl-out" : ""}" data-pick="${esc(a.name)}"><span class="sl-place"></span><span class="sl-bib">${esc(a.bib ?? "")}</span><span class="sl-name">${esc(a.name)}${irmBadge(a.status)}</span><span class="sl-nat">${esc(a.nat || "")}</span>${pursuit ? `<span class="sl-behind">${esc(a.behind || "")}</span>` : ""}</div>`;
   }).join("");
   const title = r.team ? `Komandos ir sudėtys (${sl.length})` : `Startų sąrašas (${sl.length})${pursuit ? " · atsilikimas starte" : ""}`;
   const hint = open && !isLocked(r) ? `<div class="sl-hint">👆 Paspausk ant sportininko – jis įkeliamas į pirmą laisvą vietą. Paspaudus dar kartą – išimamas.</div>` : "";

@@ -307,7 +307,8 @@
     {
      "name": "Isak Leknes FREY",
      "nat": "NOR",
-     "bib": 60
+     "bib": 60,
+     "status": "DNS"
     },
     {
      "name": "Tuomas HARJULA",
@@ -412,7 +413,8 @@
     {
      "name": "Danilo RIETHMUELLER",
      "nat": "GER",
-     "bib": 81
+     "bib": 81,
+     "status": "DNS"
     },
     {
      "name": "Mikulas KARLIK",
@@ -432,12 +434,14 @@
     {
      "name": "Lovro PLANKO",
      "nat": "SLO",
-     "bib": 85
+     "bib": 85,
+     "status": "DNS"
     },
     {
      "name": "Horia URS",
      "nat": "ROU",
-     "bib": 86
+     "bib": 86,
+     "status": "DNS"
     },
     {
      "name": "Kirill BAUER",
@@ -547,7 +551,8 @@
     {
      "name": "Aljaz OMEJC",
      "nat": "SLO",
-     "bib": 108
+     "bib": 108,
+     "status": "DNS"
     },
     {
      "name": "Alexandr MUKHIN",

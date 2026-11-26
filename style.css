@@ -344,3 +344,7 @@ input.combo-in.sel-empty{border:2px solid #f87171;background:#fff5f5}
 html[data-theme="dark"] input.combo-in.sel-empty{background:#3a1414}
 input.combo-in.flash{animation:flashbg .8s ease-out}
 .sl-search{width:100%;margin:0 0 8px}
+
+.sl-irm{display:inline-block;margin-left:6px;font-size:10px;font-weight:800;color:#fff;background:#6b7280;border-radius:4px;padding:1px 5px;vertical-align:middle}
+.sl-out .sl-name{text-decoration:line-through;color:var(--muted)}
+td .sl-irm{background:#dc2626}

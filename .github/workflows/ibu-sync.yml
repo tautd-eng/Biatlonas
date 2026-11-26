@@ -2,7 +2,8 @@ name: IBU sinchronizacija
 
 on:
   schedule:
-    - cron: "7,37 * * * *"   # kas 30 min – startų sąrašai, laikai, rezultatai
+    - cron: "7,37 * * * *"            # kas 30 min visą parą
+    - cron: "2-52/10 9-20 * * *"       # 11:00–23:00 LT kas 10 min (rungčių laikas)
     - cron: "17 3 * * *"     # kasdien – naujų sezono rungčių paieška
   workflow_dispatch:
     inputs:

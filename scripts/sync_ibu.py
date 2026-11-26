@@ -110,8 +110,11 @@ def build_startlist(st, comp):
                 (t.get("TeamId") and r.get("TeamId") == t.get("TeamId")) or
                 (str(r.get("Bib") or "").split("-")[0] == str(t.get("Bib"))))]
             legs.sort(key=lambda r: int(r.get("Leg") or 0))
-            out.append({"name": team_name(t), "nat": t.get("Nat") or "", "bib": int(t["Bib"]) if str(t.get("Bib") or "").isdigit() else t.get("Bib"),
-                        "members": [person(l) for l in legs]})
+            e = {"name": team_name(t), "nat": t.get("Nat") or "", "bib": int(t["Bib"]) if str(t.get("Bib") or "").isdigit() else t.get("Bib"),
+                 "members": [person(l) for l in legs]}
+            if t.get("IRM"):
+                e["status"] = t["IRM"]
+            out.append(e)
         return out
     pursuit = comp.get("DisciplineId") == "PU"
     out = []
@@ -119,6 +122,8 @@ def build_startlist(st, comp):
         if r.get("IsTeam"):
             continue
         e = {"name": person(r), "nat": r.get("Nat") or "", "bib": int(r["Bib"]) if str(r.get("Bib") or "").isdigit() else r.get("Bib")}
+        if r.get("IRM"):
+            e["status"] = r["IRM"]  # DNS / DNF / LAP / DSQ
         if pursuit:
             e["behind"] = fmt_behind(r)
         out.append(e)
@@ -212,7 +217,9 @@ def main():
             continue
         start = parse_ts(r["start"])
         done = bool(r.get("result"))
-        if done or start > t + timedelta(days=4) or start < t - timedelta(days=5):
+        if start > t + timedelta(days=4) or start < t - timedelta(days=5):
+            continue
+        if done and start < t - timedelta(hours=12):
             continue
         log(f"Atnaujinama: {r['name']} ({rid})")
         st = fetch(rid)
@@ -227,6 +234,14 @@ def main():
         if comp.get("StatusText") and "cancel" in comp["StatusText"].lower():
             if r.get("note") != "Rungtis atšaukta":
                 r["note"] = "Rungtis atšaukta"; changed.append(f"{r['name']}: atšaukta")
+        # DNS/DNF žymos – atnaujinam esamo sąrašo įrašus (vardų nekeičiam)
+        sl_now = {e["name"]: e.get("status") for e in build_startlist(st, comp)}
+        for e in r.get("startlist") or []:
+            new = sl_now.get(e["name"])
+            if e["name"] in sl_now and new != e.get("status"):
+                if new: e["status"] = new
+                else: e.pop("status", None)
+                changed.append(f"{r['name']}: {e['name']} {new or 'vėl startuoja'}")
         res = build_result(st, comp)
         if res and res != r.get("result"):
             r["result"] = res
