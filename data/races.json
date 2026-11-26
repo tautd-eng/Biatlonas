@@ -582,8 +582,533 @@
    "name": "Moterų 15 km individuali",
    "start": "2026-11-27T15:15:00Z",
    "team": false,
-   "startlist": [],
-   "favorites": [],
+   "startlist": [
+    {
+     "name": "Milena TODOROVA",
+     "nat": "BUL",
+     "bib": 1
+    },
+    {
+     "name": "Judita TRAUBAITE",
+     "nat": "LTU",
+     "bib": 2
+    },
+    {
+     "name": "Lotte LIE",
+     "nat": "BEL",
+     "bib": 3
+    },
+    {
+     "name": "Anne DE BESCHE",
+     "nat": "DEN",
+     "bib": 4
+    },
+    {
+     "name": "Lucinda ANDERSON",
+     "nat": "USA",
+     "bib": 5
+    },
+    {
+     "name": "Jessica JISLOVA",
+     "nat": "CZE",
+     "bib": 6
+    },
+    {
+     "name": "Pascale PARADIS",
+     "nat": "CAN",
+     "bib": 7
+    },
+    {
+     "name": "Juni ARNEKLEIV",
+     "nat": "NOR",
+     "bib": 8
+    },
+    {
+     "name": "Anastasiya MERKUSHYNA",
+     "nat": "UKR",
+     "bib": 9
+    },
+    {
+     "name": "Julia KINK",
+     "nat": "GER",
+     "bib": 10
+    },
+    {
+     "name": "Lena REPINC",
+     "nat": "SLO",
+     "bib": 11
+    },
+    {
+     "name": "Alina STREMOUS",
+     "nat": "MDA",
+     "bib": 12
+    },
+    {
+     "name": "Dunja ZDOUC",
+     "nat": "AUT",
+     "bib": 13
+    },
+    {
+     "name": "Gilonne GUIGONNAT",
+     "nat": "FRA",
+     "bib": 14
+    },
+    {
+     "name": "Johanna SKOTTHEIM",
+     "nat": "SWE",
+     "bib": 15
+    },
+    {
+     "name": "Regina ERMITS",
+     "nat": "EST",
+     "bib": 16
+    },
+    {
+     "name": "Inka HAMALAINEN",
+     "nat": "FIN",
+     "bib": 17
+    },
+    {
+     "name": "Karoline Offigstad KNOTTEN",
+     "nat": "NOR",
+     "bib": 18
+    },
+    {
+     "name": "Natalia SIDOROWICZ",
+     "nat": "POL",
+     "bib": 19
+    },
+    {
+     "name": "Polona KLEMENCIC",
+     "nat": "SLO",
+     "bib": 20
+    },
+    {
+     "name": "Lea MEIER",
+     "nat": "SUI",
+     "bib": 21
+    },
+    {
+     "name": "Deedra IRWIN",
+     "nat": "USA",
+     "bib": 22
+    },
+    {
+     "name": "Baiba BENDIKA",
+     "nat": "LAT",
+     "bib": 23
+    },
+    {
+     "name": "Anna-Karin HEIJDENBERG",
+     "nat": "SWE",
+     "bib": 24
+    },
+    {
+     "name": "Ema KAPUSTOVA",
+     "nat": "SVK",
+     "bib": 25
+    },
+    {
+     "name": "Amy BASERGA",
+     "nat": "SUI",
+     "bib": 26
+    },
+    {
+     "name": "Hannah AUCHENTALLER",
+     "nat": "ITA",
+     "bib": 27
+    },
+    {
+     "name": "Julia TANNHEIMER",
+     "nat": "GER",
+     "bib": 28
+    },
+    {
+     "name": "Tuuli TOMINGAS",
+     "nat": "EST",
+     "bib": 29
+    },
+    {
+     "name": "Marthe Krakstad JOHANSEN",
+     "nat": "NOR",
+     "bib": 30
+    },
+    {
+     "name": "Valentina DIMITROVA",
+     "nat": "BUL",
+     "bib": 31
+    },
+    {
+     "name": "Janina HETTICH-WALZ",
+     "nat": "GER",
+     "bib": 32
+    },
+    {
+     "name": "Elza BLEIDELE",
+     "nat": "LAT",
+     "bib": 33
+    },
+    {
+     "name": "Ingrid Landmark TANDREVOLD",
+     "nat": "NOR",
+     "bib": 34
+    },
+    {
+     "name": "Paula BOTET",
+     "nat": "FRA",
+     "bib": 35
+    },
+    {
+     "name": "Lucie CHARVATOVA",
+     "nat": "CZE",
+     "bib": 36
+    },
+    {
+     "name": "Chloe LEVINS",
+     "nat": "USA",
+     "bib": 37
+    },
+    {
+     "name": "Ella HALVARSSON",
+     "nat": "SWE",
+     "bib": 38
+    },
+    {
+     "name": "Michela CARRARA",
+     "nat": "ITA",
+     "bib": 39
+    },
+    {
+     "name": "Justine BRAISAZ-BOUCHET",
+     "nat": "FRA",
+     "bib": 40
+    },
+    {
+     "name": "Anika KOZICA",
+     "nat": "CRO",
+     "bib": 41
+    },
+    {
+     "name": "Lisa VITTOZZI",
+     "nat": "ITA",
+     "bib": 42
+    },
+    {
+     "name": "Johanna NORDQVIST",
+     "nat": "SWE",
+     "bib": 43
+    },
+    {
+     "name": "Maren KIRKEEIDE",
+     "nat": "NOR",
+     "bib": 44
+    },
+    {
+     "name": "Joanna JAKIELA",
+     "nat": "POL",
+     "bib": 45
+    },
+    {
+     "name": "Anna MAGNUSSON",
+     "nat": "SWE",
+     "bib": 46
+    },
+    {
+     "name": "Anna ANDEXER",
+     "nat": "AUT",
+     "bib": 47
+    },
+    {
+     "name": "Vanessa VOIGT",
+     "nat": "GER",
+     "bib": 48
+    },
+    {
+     "name": "Nadia MOSER",
+     "nat": "CAN",
+     "bib": 49
+    },
+    {
+     "name": "Camille BENED",
+     "nat": "FRA",
+     "bib": 50
+    },
+    {
+     "name": "Katerina PAVLU",
+     "nat": "CZE",
+     "bib": 51
+    },
+    {
+     "name": "Lou JEANMONNOT",
+     "nat": "FRA",
+     "bib": 52
+    },
+    {
+     "name": "Kamila ZUK",
+     "nat": "POL",
+     "bib": 53
+    },
+    {
+     "name": "Oceane MICHELON",
+     "nat": "FRA",
+     "bib": 54
+    },
+    {
+     "name": "Marlene FICHTNER",
+     "nat": "GER",
+     "bib": 55
+    },
+    {
+     "name": "Elvira OEBERG",
+     "nat": "SWE",
+     "bib": 56
+    },
+    {
+     "name": "Khrystyna DMYTRENKO",
+     "nat": "UKR",
+     "bib": 57
+    },
+    {
+     "name": "Tereza VOBORNIKOVA",
+     "nat": "CZE",
+     "bib": 58
+    },
+    {
+     "name": "Sonja LEINAMO",
+     "nat": "FIN",
+     "bib": 59
+    },
+    {
+     "name": "Suvi MINKKINEN",
+     "nat": "FIN",
+     "bib": 60
+    },
+    {
+     "name": "Venla LEHTONEN",
+     "nat": "FIN",
+     "bib": 61
+    },
+    {
+     "name": "Julia SIMON",
+     "nat": "FRA",
+     "bib": 62
+    },
+    {
+     "name": "Susan KUELM",
+     "nat": "EST",
+     "bib": 63
+    },
+    {
+     "name": "Anna GANDLER",
+     "nat": "AUT",
+     "bib": 64
+    },
+    {
+     "name": "Martina TRABUCCHI",
+     "nat": "ITA",
+     "bib": 65
+    },
+    {
+     "name": "Lora HRISTOVA",
+     "nat": "BUL",
+     "bib": 66
+    },
+    {
+     "name": "Aita GASPARIN",
+     "nat": "SUI",
+     "bib": 67
+    },
+    {
+     "name": "Maria REMENOVA",
+     "nat": "SVK",
+     "bib": 68
+    },
+    {
+     "name": "Siri SKAR",
+     "nat": "NOR",
+     "bib": 69
+    },
+    {
+     "name": "Lena HAECKI-GROSS",
+     "nat": "SUI",
+     "bib": 70
+    },
+    {
+     "name": "Anna JUPPE",
+     "nat": "AUT",
+     "bib": 71
+    },
+    {
+     "name": "Erika JANKA",
+     "nat": "FIN",
+     "bib": 72
+    },
+    {
+     "name": "Fabiana CARPELLA",
+     "nat": "ITA",
+     "bib": 73
+    },
+    {
+     "name": "Monika HOJNISZ-STAREGA",
+     "nat": "POL",
+     "bib": 74
+    },
+    {
+     "name": "Tamara STEINER",
+     "nat": "AUT",
+     "bib": 75
+    },
+    {
+     "name": "Anna MAKA",
+     "nat": "POL",
+     "bib": 76
+    },
+    {
+     "name": "Lydia METTLER",
+     "nat": "SUI",
+     "bib": 77
+    },
+    {
+     "name": "Tetiana TARASIUK",
+     "nat": "UKR",
+     "bib": 78
+    },
+    {
+     "name": "Samuela COMOLA",
+     "nat": "ITA",
+     "bib": 79
+    },
+    {
+     "name": "Zuzana REMENOVA",
+     "nat": "SVK",
+     "bib": 80
+    },
+    {
+     "name": "Maria ZDRAVKOVA",
+     "nat": "BUL",
+     "bib": 81
+    },
+    {
+     "name": "Anna WEIDEL",
+     "nat": "GER",
+     "bib": 82
+    },
+    {
+     "name": "Margie FREED",
+     "nat": "USA",
+     "bib": 83
+    },
+    {
+     "name": "Hanna-Brita KAASIK",
+     "nat": "EST",
+     "bib": 84
+    },
+    {
+     "name": "Sandra BULINA",
+     "nat": "LAT",
+     "bib": 85
+    },
+    {
+     "name": "Olena HORODNA",
+     "nat": "UKR",
+     "bib": 86
+    },
+    {
+     "name": "Aisha RAKISHEVA",
+     "nat": "KAZ",
+     "bib": 87
+    },
+    {
+     "name": "Shawna PENDRY",
+     "nat": "GBR",
+     "bib": 88
+    },
+    {
+     "name": "Darya KLIMINA",
+     "nat": "KAZ",
+     "bib": 89
+    },
+    {
+     "name": "Chloe DUPONT",
+     "nat": "GBR",
+     "bib": 90
+    },
+    {
+     "name": "Laura KINYBAYEVA",
+     "nat": "KAZ",
+     "bib": 91
+    },
+    {
+     "name": "Lucie JANDUROVA",
+     "nat": "CZE",
+     "bib": 92
+    },
+    {
+     "name": "Jumi JUNG",
+     "nat": "KOR",
+     "bib": 93
+    },
+    {
+     "name": "Manca CASERMAN",
+     "nat": "SLO",
+     "bib": 94
+    },
+    {
+     "name": "Ukaleq Astri SLETTEMARK",
+     "nat": "GRL",
+     "bib": 95
+    },
+    {
+     "name": "Lidija BARAUSKIENE",
+     "nat": "LTU",
+     "bib": 96
+    },
+    {
+     "name": "Eve BOUVARD",
+     "nat": "BEL",
+     "bib": 97
+    },
+    {
+     "name": "Darya DOLIDOVICH",
+     "nat": "BRT",
+     "bib": 98
+    },
+    {
+     "name": "Marisa EMONTS",
+     "nat": "BEL",
+     "bib": 99
+    },
+    {
+     "name": "Gillian GOWLING",
+     "nat": "CAN",
+     "bib": 100
+    },
+    {
+     "name": "Ekaterina AVVAKUMOVA",
+     "nat": "KOR",
+     "bib": 101
+    },
+    {
+     "name": "Michaela STRAKOVA",
+     "nat": "SVK",
+     "bib": 102
+    },
+    {
+     "name": "Ela SEVER",
+     "nat": "SLO",
+     "bib": 103
+    }
+   ],
+   "favorites": [
+    "Lou JEANMONNOT",
+    "Julia SIMON",
+    "Elvira OEBERG",
+    "Lisa VITTOZZI",
+    "Suvi MINKKINEN",
+    "Justine BRAISAZ-BOUCHET",
+    "Ingrid Landmark TANDREVOLD",
+    "Vanessa VOIGT"
+   ],
    "result": [],
    "ibu": "BT2627SWRLCP01SWIN"
   },
