@@ -44,7 +44,12 @@ def log(*a):
 
 
 def fetch(race_id, retries=2, timeout=15):
-    req = urllib.request.Request(BASE + race_id, headers={"User-Agent": UA, "Accept-Language": "en"})
+    # ?t=… apeina CDN talpyklą (be jo grąžinamas senas „Start list not announced yet“ puslapis)
+    url = f"{BASE}{race_id}?t={int(time.time())}"
+    req = urllib.request.Request(url, headers={
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml", "Accept-Language": "en",
+        "Cache-Control": "no-cache", "Pragma": "no-cache"})
     for attempt in range(retries):
         try:
             with urllib.request.urlopen(req, timeout=timeout) as r:
@@ -214,6 +219,8 @@ def main():
         if not st:
             continue
         comp = st["Competition"]
+        n_rows = len(st.get("Results") or [])
+        log(f"::notice title={r['id']}::IsStartList={st.get('IsStartList')} IsResult={st.get('IsResult')} eilučių={n_rows}")
         if comp.get("StartTime") and comp["StartTime"] != r["start"]:
             r["start"] = comp["StartTime"]
             changed.append(f"{r['name']}: starto laikas {r['start']}")
