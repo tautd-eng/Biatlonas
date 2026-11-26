@@ -565,8 +565,16 @@
     "Vetle Sjaastad CHRISTIANSEN",
     "Johannes DALE-SKJEVDAL"
    ],
-   "result": [],
-   "ibu": "BT2627SWRLCP01SMIN"
+   "result": [
+    "Campbell WRIGHT",
+    "Justus STRELOW",
+    "Vetle Sjaastad CHRISTIANSEN",
+    "Sturla Holm LAEGREID",
+    "Niklas HARTWEG",
+    "Philipp HORN"
+   ],
+   "ibu": "BT2627SWRLCP01SMIN",
+   "ltuPlace": 28
   },
   {
    "id": "2627-KON-IN-W",
@@ -1653,7 +1661,7 @@
     "2",
     "3 ar daugiau"
    ],
-   "answer": null,
+   "answer": "0",
    "points": 1
   },
   {
