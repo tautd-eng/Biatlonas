@@ -1287,7 +1287,15 @@
      "members": []
     }
    ],
-   "favorites": [],
+   "favorites": [
+    "Norway",
+    "France",
+    "Sweden",
+    "Germany",
+    "Italy",
+    "Czechia",
+    "Switzerland"
+   ],
    "result": [],
    "ibu": "BT2627SWRLCP01MXSR"
   },
@@ -1437,7 +1445,15 @@
      "members": []
     }
    ],
-   "favorites": [],
+   "favorites": [
+    "Norway",
+    "France",
+    "Sweden",
+    "Germany",
+    "Italy",
+    "Czechia",
+    "Switzerland"
+   ],
    "result": [],
    "ibu": "BT2627SWRLCP01MXRL"
   },
