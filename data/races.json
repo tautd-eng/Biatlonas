@@ -1,6 +1,6 @@
 {
  "season": "2026/27",
- "updated": "2026-11-25T14:10:59Z",
+ "updated": "2026-11-27T18:50:04Z",
  "races": [
   {
    "id": "2627-KON-IN-M",
@@ -946,7 +946,8 @@
     {
      "name": "Erika JANKA",
      "nat": "FIN",
-     "bib": 72
+     "bib": 72,
+     "status": "DNF"
     },
     {
      "name": "Fabiana CARPELLA",
@@ -1114,8 +1115,16 @@
     "Ingrid Landmark TANDREVOLD",
     "Vanessa VOIGT"
    ],
-   "result": [],
-   "ibu": "BT2627SWRLCP01SWIN"
+   "result": [
+    "Elvira OEBERG",
+    "Sonja LEINAMO",
+    "Julia SIMON",
+    "Oceane MICHELON",
+    "Marthe Krakstad JOHANSEN",
+    "Karoline Offigstad KNOTTEN"
+   ],
+   "ibu": "BT2627SWRLCP01SWIN",
+   "ltuPlace": 73
   },
   {
    "id": "2627-KON-SMR",
@@ -1128,162 +1137,292 @@
      "name": "Norway",
      "nat": "NOR",
      "bib": 1,
-     "members": []
+     "members": [
+      "Karoline Offigstad KNOTTEN",
+      "Sturla Holm LAEGREID",
+      "Karoline Offigstad KNOTTEN",
+      "Sturla Holm LAEGREID"
+     ]
     },
     {
      "name": "Sweden",
      "nat": "SWE",
      "bib": 2,
-     "members": []
+     "members": [
+      "Ella HALVARSSON",
+      "Sebastian SAMUELSSON",
+      "Ella HALVARSSON",
+      "Sebastian SAMUELSSON"
+     ]
     },
     {
      "name": "Finland",
      "nat": "FIN",
      "bib": 3,
-     "members": []
+     "members": [
+      "Suvi MINKKINEN",
+      "Tuomas HARJULA",
+      "Suvi MINKKINEN",
+      "Tuomas HARJULA"
+     ]
     },
     {
      "name": "France",
      "nat": "FRA",
      "bib": 4,
-     "members": []
+     "members": [
+      "Lou JEANMONNOT",
+      "Eric PERROT",
+      "Lou JEANMONNOT",
+      "Eric PERROT"
+     ]
     },
     {
      "name": "Switzerland",
      "nat": "SUI",
      "bib": 5,
-     "members": []
+     "members": [
+      "Amy BASERGA",
+      "Niklas HARTWEG",
+      "Amy BASERGA",
+      "Niklas HARTWEG"
+     ]
     },
     {
      "name": "Poland",
      "nat": "POL",
      "bib": 6,
-     "members": []
+     "members": [
+      "Joanna JAKIELA",
+      "Konrad BADACZ",
+      "Joanna JAKIELA",
+      "Konrad BADACZ"
+     ]
     },
     {
      "name": "Austria",
      "nat": "AUT",
      "bib": 7,
-     "members": []
+     "members": [
+      "Dunja ZDOUC",
+      "Dominic UNTERWEGER",
+      "Dunja ZDOUC",
+      "Dominic UNTERWEGER"
+     ]
     },
     {
      "name": "Czechia",
      "nat": "CZE",
      "bib": 8,
-     "members": []
+     "members": [
+      "Tereza VOBORNIKOVA",
+      "Tomas MIKYSKA",
+      "Tereza VOBORNIKOVA",
+      "Tomas MIKYSKA"
+     ]
     },
     {
      "name": "Ukraine",
      "nat": "UKR",
      "bib": 9,
-     "members": []
+     "members": [
+      "Oleksandra MERKUSHYNA",
+      "Anton DUDCHENKO",
+      "Oleksandra MERKUSHYNA",
+      "Anton DUDCHENKO"
+     ]
     },
     {
      "name": "Germany",
      "nat": "GER",
      "bib": 10,
-     "members": []
+     "members": [
+      "Marlene FICHTNER",
+      "Justus STRELOW",
+      "Marlene FICHTNER",
+      "Justus STRELOW"
+     ]
     },
     {
      "name": "Italy",
      "nat": "ITA",
      "bib": 11,
-     "members": []
+     "members": [
+      "Martina TRABUCCHI",
+      "Christoph PIRCHER",
+      "Martina TRABUCCHI",
+      "Christoph PIRCHER"
+     ]
     },
     {
      "name": "Slovenia",
      "nat": "SLO",
      "bib": 12,
-     "members": []
+     "members": [
+      "Polona KLEMENCIC",
+      "Jakov FAK",
+      "Polona KLEMENCIC",
+      "Jakov FAK"
+     ]
     },
     {
      "name": "Estonia",
      "nat": "EST",
      "bib": 13,
-     "members": []
+     "members": [
+      "Regina ERMITS",
+      "Rene ZAHKNA",
+      "Regina ERMITS",
+      "Rene ZAHKNA"
+     ]
     },
     {
      "name": "Lithuania",
      "nat": "LTU",
      "bib": 14,
-     "members": []
+     "members": [
+      "Judita TRAUBAITE",
+      "Nikita CIGAK",
+      "Judita TRAUBAITE",
+      "Nikita CIGAK"
+     ]
     },
     {
      "name": "United States",
      "nat": "USA",
      "bib": 15,
-     "members": []
+     "members": [
+      "Deedra IRWIN",
+      "Campbell WRIGHT",
+      "Deedra IRWIN",
+      "Campbell WRIGHT"
+     ]
     },
     {
      "name": "Kazakhstan",
      "nat": "KAZ",
      "bib": 16,
-     "members": []
+     "members": [
+      "Milana GENEVA",
+      "Vladislav KIREYEV",
+      "Milana GENEVA",
+      "Vladislav KIREYEV"
+     ]
     },
     {
      "name": "Latvia",
      "nat": "LAT",
      "bib": 17,
-     "members": []
+     "members": [
+      "Baiba BENDIKA",
+      "Rihards LOZBERS",
+      "Baiba BENDIKA",
+      "Rihards LOZBERS"
+     ]
+    },
+    {
+     "name": "Slovakia",
+     "nat": "SVK",
+     "bib": 18,
+     "members": [
+      "Ema KAPUSTOVA",
+      "Jakub BORGULA",
+      "Ema KAPUSTOVA",
+      "Jakub BORGULA"
+     ]
+    },
+    {
+     "name": "Bulgaria",
+     "nat": "BUL",
+     "bib": 19,
+     "members": [
+      "Valentina DIMITROVA",
+      "Georgi DZHORGOV",
+      "Valentina DIMITROVA",
+      "Georgi DZHORGOV"
+     ]
+    },
+    {
+     "name": "Canada",
+     "nat": "CAN",
+     "bib": 20,
+     "members": [
+      "Nadia MOSER",
+      "Jasper FLEMING",
+      "Nadia MOSER",
+      "Jasper FLEMING"
+     ]
+    },
+    {
+     "name": "Greenland",
+     "nat": "GRL",
+     "bib": 21,
+     "members": [
+      "Ukaleq Astri SLETTEMARK",
+      "Sondre SLETTEMARK",
+      "Ukaleq Astri SLETTEMARK",
+      "Sondre SLETTEMARK"
+     ]
+    },
+    {
+     "name": "Belgium",
+     "nat": "BEL",
+     "bib": 22,
+     "members": [
+      "Marisa EMONTS",
+      "Sam PARMANTIER",
+      "Marisa EMONTS",
+      "Sam PARMANTIER"
+     ]
+    },
+    {
+     "name": "Denmark",
+     "nat": "DEN",
+     "bib": 23,
+     "members": [
+      "Anne DE BESCHE",
+      "Rasmus SCHIELLERUP",
+      "Anne DE BESCHE",
+      "Rasmus SCHIELLERUP"
+     ]
+    },
+    {
+     "name": "Croatia",
+     "nat": "CRO",
+     "bib": 24,
+     "members": [
+      "Anika KOZICA",
+      "Kresimir CRNKOVIC",
+      "Anika KOZICA",
+      "Kresimir CRNKOVIC"
+     ]
+    },
+    {
+     "name": "Great Britain",
+     "nat": "GBR",
+     "bib": 25,
+     "members": [
+      "Shawna PENDRY",
+      "Graham BENSON",
+      "Shawna PENDRY",
+      "Graham BENSON"
+     ]
+    },
+    {
+     "name": "Korea",
+     "nat": "KOR",
+     "bib": 26,
+     "members": [
+      "Ekaterina AVVAKUMOVA",
+      "Timofei LAPSHIN",
+      "Ekaterina AVVAKUMOVA",
+      "Timofei LAPSHIN"
+     ]
     },
     {
      "name": "Moldova",
      "nat": "MDA",
      "bib": 18,
-     "members": []
-    },
-    {
-     "name": "Slovakia",
-     "nat": "SVK",
-     "bib": 19,
-     "members": []
-    },
-    {
-     "name": "Bulgaria",
-     "nat": "BUL",
-     "bib": 20,
-     "members": []
-    },
-    {
-     "name": "Canada",
-     "nat": "CAN",
-     "bib": 21,
-     "members": []
-    },
-    {
-     "name": "Greenland",
-     "nat": "GRL",
-     "bib": 22,
-     "members": []
-    },
-    {
-     "name": "Belgium",
-     "nat": "BEL",
-     "bib": 23,
-     "members": []
-    },
-    {
-     "name": "Denmark",
-     "nat": "DEN",
-     "bib": 24,
-     "members": []
-    },
-    {
-     "name": "Croatia",
-     "nat": "CRO",
-     "bib": 25,
-     "members": []
-    },
-    {
-     "name": "Great Britain",
-     "nat": "GBR",
-     "bib": 26,
-     "members": []
-    },
-    {
-     "name": "Korea",
-     "nat": "KOR",
-     "bib": 27,
      "members": []
     }
    ],
@@ -1310,139 +1449,254 @@
      "name": "France",
      "nat": "FRA",
      "bib": 1,
-     "members": []
+     "members": [
+      "Julia SIMON",
+      "Oceane MICHELON",
+      "Oscar LOMBARDOT",
+      "Emilien CLAUDE"
+     ]
     },
     {
      "name": "Italy",
      "nat": "ITA",
      "bib": 2,
-     "members": []
+     "members": [
+      "Hannah AUCHENTALLER",
+      "Michela CARRARA",
+      "Lukas HOFER",
+      "Tommaso GIACOMEL"
+     ]
     },
     {
      "name": "Sweden",
      "nat": "SWE",
      "bib": 3,
-     "members": []
+     "members": [
+      "Elvira OEBERG",
+      "Anna-Karin HEIJDENBERG",
+      "Jesper NELIN",
+      "Viktor BRANDT"
+     ]
     },
     {
      "name": "United States",
      "nat": "USA",
      "bib": 4,
-     "members": []
+     "members": [
+      "Chloe LEVINS",
+      "Lucinda ANDERSON",
+      "Vincent BONACCI",
+      "Vaclav CERVENKA"
+     ]
     },
     {
      "name": "Czechia",
      "nat": "CZE",
      "bib": 5,
-     "members": []
+     "members": [
+      "Jessica JISLOVA",
+      "Lucie CHARVATOVA",
+      "Vitezslav HORNIG",
+      "Michal KRCMAR"
+     ]
     },
     {
      "name": "Norway",
      "nat": "NOR",
      "bib": 6,
-     "members": []
+     "members": [
+      "Marthe Krakstad JOHANSEN",
+      "Maren KIRKEEIDE",
+      "Johan-Olav Smoerdal BOTN",
+      "Vetle Sjaastad CHRISTIANSEN"
+     ]
     },
     {
      "name": "Switzerland",
      "nat": "SUI",
      "bib": 7,
-     "members": []
+     "members": [
+      "Lea MEIER",
+      "Aita GASPARIN",
+      "Sebastian STALDER",
+      "Joscha BURKHALTER"
+     ]
     },
     {
      "name": "Germany",
      "nat": "GER",
      "bib": 8,
-     "members": []
+     "members": [
+      "Vanessa VOIGT",
+      "Janina HETTICH-WALZ",
+      "Philipp NAWRATH",
+      "Philipp HORN"
+     ]
     },
     {
      "name": "Finland",
      "nat": "FIN",
      "bib": 9,
-     "members": []
+     "members": [
+      "Venla LEHTONEN",
+      "Sonja LEINAMO",
+      "Arttu HEIKKINEN",
+      "Otto INVENIUS"
+     ]
     },
     {
      "name": "Slovakia",
      "nat": "SVK",
      "bib": 10,
-     "members": []
+     "members": [
+      "Zuzana REMENOVA",
+      "Maria REMENOVA",
+      "Martin MATKO",
+      "Simon ADAMOV"
+     ]
     },
     {
      "name": "Austria",
      "nat": "AUT",
      "bib": 11,
-     "members": []
+     "members": [
+      "Tamara STEINER",
+      "Lara WAGNER",
+      "Thomas MARCHL",
+      "Lukas HASLINGER"
+     ]
     },
     {
      "name": "Slovenia",
      "nat": "SLO",
      "bib": 12,
-     "members": []
+     "members": [
+      "Lena REPINC",
+      "Manca CASERMAN",
+      "Lovro PLANKO",
+      "Aljaz OMEJC"
+     ]
     },
     {
      "name": "Ukraine",
      "nat": "UKR",
      "bib": 13,
-     "members": []
+     "members": [
+      "Olena HORODNA",
+      "Khrystyna DMYTRENKO",
+      "Vitalii MANDZYN",
+      "Dmytro PIDRUCHNYI"
+     ]
     },
     {
      "name": "Estonia",
      "nat": "EST",
      "bib": 14,
-     "members": []
+     "members": [
+      "Susan KUELM",
+      "Tuuli TOMINGAS",
+      "Kristo SIIMER",
+      "Mark-Markos KEHVA"
+     ]
     },
     {
      "name": "Poland",
      "nat": "POL",
      "bib": 15,
-     "members": []
+     "members": [
+      "Natalia SIDOROWICZ",
+      "Kamila ZUK",
+      "Jan GUNKA",
+      "Grzegorz GALICA"
+     ]
     },
     {
      "name": "Canada",
      "nat": "CAN",
      "bib": 16,
-     "members": []
+     "members": [
+      "Pascale PARADIS",
+      "Gillian GOWLING",
+      "Gavin JOHNSTON",
+      "Matthew STRUM"
+     ]
     },
     {
      "name": "Latvia",
      "nat": "LAT",
      "bib": 17,
-     "members": []
+     "members": [
+      "Elza BLEIDELE",
+      "Sandra BULINA",
+      "Renars BIRKENTALS",
+      "Andrejs RASTORGUJEVS"
+     ]
     },
     {
      "name": "Lithuania",
      "nat": "LTU",
      "bib": 18,
-     "members": []
+     "members": [
+      "Judita TRAUBAITE",
+      "Lidija BARAUSKIENE",
+      "Vytautas STROLIA",
+      "Maksim FOMIN"
+     ]
     },
     {
      "name": "Belgium",
      "nat": "BEL",
      "bib": 19,
-     "members": []
+     "members": [
+      "Lotte LIE",
+      "Eve BOUVARD",
+      "Florent CLAUDE",
+      "Thierry LANGER"
+     ]
     },
     {
      "name": "Kazakhstan",
      "nat": "KAZ",
      "bib": 20,
-     "members": []
+     "members": [
+      "Darya KLIMINA",
+      "Aisha RAKISHEVA",
+      "Kirill BAUER",
+      "Alexandr MUKHIN"
+     ]
     },
     {
      "name": "Bulgaria",
      "nat": "BUL",
      "bib": 21,
-     "members": []
+     "members": [
+      "Lora HRISTOVA",
+      "Milena TODOROVA",
+      "Vladimir ILIEV",
+      "Vasil ZASHEV"
+     ]
     },
     {
      "name": "Great Britain",
      "nat": "GBR",
      "bib": 22,
-     "members": []
+     "members": [
+      "Shawna PENDRY",
+      "Chloe DUPONT",
+      "Jacques JEFFERIES",
+      "Graham BENSON"
+     ]
     },
     {
      "name": "Korea",
      "nat": "KOR",
      "bib": 23,
-     "members": []
+     "members": [
+      "Jumi JUNG",
+      "Ekaterina AVVAKUMOVA",
+      "Dujin CHOI",
+      "Timofei LAPSHIN"
+     ]
     }
    ],
    "favorites": [
