@@ -15,7 +15,7 @@ const norm = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLow
 const S = {
   races: [], config: { players: ["Tautvydas","Vitalija","Vitalis"], scoring: {
     individual: { exact: [6,5,4,3,3,3], adjacent: 2, inTop6: 1, podiumBonus: 2, top6Bonus: 2 },
-    team: { exact: [4,3,3,2,2,2], adjacent: 2, inTop6: 1, podiumBonus: 1, top6Bonus: 1 },
+    team: { exact: [4,3,3,2,2,2], adjacent: 1.5, inTop6: 1, podiumBonus: 1, top6Bonus: 1 },
     championshipMultiplier: 1.5 }, rulesNote: "" },
   user: null, myName: null, claims: {}, picks: {}, bonus: {}, questions: [], open: new Set(), unsub: []
 };
@@ -627,7 +627,7 @@ function renderRules() {
       <tr><td>Tiksli 2 vieta</td><td class="pts">${col(I,1)}</td><td class="pts">${col(T,1)}</td></tr>
       <tr><td>Tiksli 3 vieta</td><td class="pts">${col(I,2)}</td><td class="pts">${col(T,2)}</td></tr>
       <tr><td>Tiksli 4–6 vieta</td><td class="pts">${col(I,3)}</td><td class="pts">${col(T,3)}</td></tr>
-      <tr><td>Per vieną vietą (pvz. spėjai 2, baigė 1)</td><td class="pts">${I.adjacent}</td><td class="pts">${T.adjacent}</td></tr>
+      <tr><td>Per vieną vietą (pvz. spėjai 2, baigė 1)</td><td class="pts">${I.adjacent}</td><td class="pts">${fmtPts(T.adjacent)}</td></tr>
       <tr><td>Pateko į top-6, bet toliau</td><td class="pts">${I.inTop6}</td><td class="pts">${T.inTop6}</td></tr>
       <tr><td>🎁 Visas podiumas (1–3) tiksliai</td><td class="pts">+${I.podiumBonus}</td><td class="pts">+${T.podiumBonus}</td></tr>
       <tr><td>🎁 Visi 6 pateko į top-6</td><td class="pts">+${I.top6Bonus}</td><td class="pts">+${T.top6Bonus}</td></tr>
