@@ -51,7 +51,7 @@ const fmtPts = x => (Math.round(x * 10) / 10).toString().replace(".", ",");
 const LTU_TIERS = {
   // top: 99 = „už top'o / nebaigs“
   individual: [{ top: 10, pts: 10 }, { top: 20, pts: 6 }, { top: 30, pts: 4 }, { top: 40, pts: 2 }, { top: 60, pts: 1 }, { top: 99, pts: 1, out: 60 }],
-  team: [{ top: 10, pts: 8 }, { top: 15, pts: 4 }, { top: 18, pts: 2 }, { top: 20, pts: 1 }, { top: 99, pts: 2, out: 20 }],
+  team: [{ top: 10, pts: 8 }, { top: 15, pts: 4 }, { top: 18, pts: 2 }, { top: 20, pts: 2 }, { top: 99, pts: 1, out: 20 }],
 };
 const tierLabel = t => t.out ? `Už top ${t.out}` : `Top ${t.top}`;
 const ltuTiers = r => r.team ? LTU_TIERS.team : LTU_TIERS.individual;
