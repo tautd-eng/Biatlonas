@@ -1,6 +1,6 @@
 {
  "season": "2026/27",
- "updated": "2026-11-28T11:39:21Z",
+ "updated": "2026-11-28T14:10:25Z",
  "races": [
   {
    "id": "2627-KON-IN-M",
@@ -1435,8 +1435,16 @@
     "Czechia",
     "Switzerland"
    ],
-   "result": [],
-   "ibu": "BT2627SWRLCP01MXSR"
+   "result": [
+    "Sweden",
+    "Germany",
+    "France",
+    "Norway",
+    "Greenland",
+    "Austria"
+   ],
+   "ibu": "BT2627SWRLCP01MXSR",
+   "ltuPlace": 23
   },
   {
    "id": "2627-KON-MR",
